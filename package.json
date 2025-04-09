@@ -5,6 +5,8 @@
     "ng": "ng",
     "start": "ng serve --port 9000",
     "build": "ng build",
+    "build:qa": "ng build --configuration=qa",
+    "build:production": "ng build --configuration=production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
