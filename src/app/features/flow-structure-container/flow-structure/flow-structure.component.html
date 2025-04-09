@@ -1,0 +1,30 @@
+<ui-bi-cont-body class="body" [title]="'Estructura de flujo'">
+    <div class="body__buttons label-text-12">
+        @for (button of listActions; track $index) {
+            <button class="bg-gray-300" (click)="actionButton(button.codigo)">{{button.nombre}}</button>
+        }
+    </div>
+    <div class="flex items-center gap-x-4">
+        <h4 class="label-text-12">Tipo de flujo</h4>
+        <mat-form-field class="body__flow">
+            <mat-select class="label-text-13" placeholder="Seleccione el tipo de flujo" [formControl]="flowType" (selectionChange)="getFlowHeaders()">
+            @for (type of flowTypes; track $index) {
+                <mat-option class="label-text-13" [value]="type.flowTypeId">{{type.name}}</mat-option>
+            }
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div>
+        @if (!loading()) {
+            <bi-table
+                showIconEdit
+                showIconDelete
+                [loading]="loading()"
+                [headers]="columnsHeaderFlow"
+                [data]="flowHeaders"
+                (eventEditRow)="editRow($event)"
+            ></bi-table>
+
+        }
+    </div>
+</ui-bi-cont-body>

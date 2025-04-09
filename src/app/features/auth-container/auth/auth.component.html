@@ -1,0 +1,34 @@
+<div class="login">
+    <div class="login__container">
+        <div class="login__logo">
+          <img src="../../../../assets/logo/logo_linea_GEOP.png" alt="logo del login"><!-- assets/logo/logo_linea_GEOP.png -->
+        </div>
+        <h2 class="login__title label-text-13">Inicio Sesión</h2>
+        <form [formGroup]="authForm" class="login__form" (ngSubmit)="signIn()">
+            <mat-form-field>
+                <mat-label class="label-text-12">Tipo de documento</mat-label>
+                <mat-select class="label-text-13" formControlName="typeDocument">
+                  @for (type of typesDocument; track $index) {
+                    <mat-option class="label-text-13" [value]="type.code">{{type.name}}</mat-option>
+                  }
+                </mat-select>
+                <!-- @if (animalControl.hasError('required')) {
+                  <mat-error>Please choose an animal</mat-error>
+                } -->
+                <!-- <mat-hint>{{animalControl.value?.sound}}</mat-hint> -->
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label class="label-text-12">Documento</mat-label>
+                <input class="label-text-13" matInput formControlName="document">
+            </mat-form-field>
+            <mat-form-field class="login__input label-text-12">
+                <mat-label>Contraseña</mat-label>
+                <input matInput [type]="hide ? 'password' : 'text'" formControlName="password">
+                <!-- <button type="button" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                  <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button> -->
+            </mat-form-field>
+            <button mat-button class="login__button label-text-13" [disabled]="authForm.invalid">INGRESAR</button>
+        </form>
+    </div>
+</div>

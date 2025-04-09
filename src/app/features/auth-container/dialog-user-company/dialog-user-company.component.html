@@ -1,0 +1,21 @@
+<div class="dialog">
+    <section class="dialog__header">
+        <h2 class="dialog__title">CONFIRMAR EMPRESA</h2>
+        <button mat-icon-button type="button" aria-label="Boton para cerrar modal" id="boton_cerrar" (click)="closeModalCompany()">
+            <mat-icon>clear</mat-icon>
+        </button>
+    </section>
+    <p>Seleccione la empresa con la que desea iniciar sesión</p>
+    <mat-form-field>
+        <mat-label>Empresa</mat-label>
+        <mat-select (selectionChange)="setCurrenCompany($event)">
+          @for (company of listUserCompany(); track $index) {
+            <mat-option [value]="company">{{company.brandName}}</mat-option>
+          }
+        </mat-select>
+    </mat-form-field>
+    <section class="dialog__footer">
+        <bi-button [typeBI]="buttonType.Cancel" [text]="'Cerrar'" (eventAction)="closeModalCompany()"></bi-button>
+        <bi-button [typeBI]="buttonType.Accept" [text]="'Ingresar'" (eventAction)="navigateToDashboard()"></bi-button>
+    </section>
+</div>

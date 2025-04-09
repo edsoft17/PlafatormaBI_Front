@@ -1,0 +1,53 @@
+@import "../../../shared/colors";
+
+.login {
+    background-color: $color-blue;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login__container {
+    background-color: #fff;
+    width: 400px;/* 
+    height: 350px; */
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    padding: 30px;
+    /* display: flex; */
+}
+
+.login__form {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.login__title {
+    display: block;
+    margin-top: 10px !important;
+}
+
+.login__input {
+    justify-content: center;
+}
+
+.mdc-button.login__button {
+    background-color: $color-blue;
+    border-radius: 30px;
+}
+
+.login__button .mdc-button__label {
+    color: white;
+}
+
+.login__logo {
+    display: flex;
+    justify-content: center;
+}

@@ -1,0 +1,37 @@
+<div class="account-hierarchy">
+    <!-- Nivel 1 -->
+    <div *ngFor="let level1 of accountsTree" class="level level1">
+      <mat-checkbox
+        [checked]="level1.selected"
+        [indeterminate]="level1.indeterminate"
+        [disabled]="isDisabled(level1)"
+        (change)="onSelectionChange($event, level1)"
+      >
+        {{ level1.name }} ({{ countAccounts(level1) }})
+      </mat-checkbox>
+  
+      <!-- Nivel 2 -->
+      <div *ngFor="let level2 of level1.children" class="level level2">
+        <mat-checkbox
+          [checked]="level2.selected"
+          [indeterminate]="level2.indeterminate"
+          [disabled]="isDisabled(level2)"
+          (change)="onSelectionChange($event, level2)"
+        >
+          {{ level2.name }} ({{ countAccounts(level2) }})
+        </mat-checkbox>
+  
+        <!-- Nivel 3 -->
+        <div *ngFor="let level3 of level2.children" class="level level3">
+          <mat-checkbox
+            [checked]="level3.selected"
+            [indeterminate]="level3.indeterminate"
+            [disabled]="isDisabled(level3)"
+            (change)="onSelectionChange($event, level3)"
+          >
+            {{ level3.name }} ({{ level3.accounts?.length || 0 }})
+          </mat-checkbox>
+        </div>
+      </div>
+    </div>
+</div>

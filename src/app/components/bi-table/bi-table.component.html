@@ -1,0 +1,118 @@
+<div class="flex justify-end items-center">
+    <bi-pagination-table
+        [data]="data"
+        [pageSizeOptions]="[5, 10, 25, 50]"
+        (eventDataSource)="dataSourceReturned($event)">
+    </bi-pagination-table>
+</div>
+
+<!-- @if (!loading) {
+}
+{{loading}} -->
+<div class="flex justify-end items-center">
+    <!-- <mat-paginator [pageSizeOptions]="[5, 10, 25, 50]"> </mat-paginator> -->
+    <!-- <bi-pagination-table
+        [data]="data"
+        [pageSizeOptions]="[5, 10, 25, 50]"
+        (eventDataSource)="dataSourceReturned($event)">
+    </bi-pagination-table> -->
+</div>
+<!-- <mat-paginator [length]="resultsLength" [pageSize]="30" aria-label="Select page of GitHub search results"></mat-paginator> -->
+<div class="table-responsive">
+    <table mat-table [dataSource]="dataSource" style="width: 100%" class="mat-cell label-text-13">
+    
+        @for (item of headers; track item.id) {
+            <ng-container [matColumnDef]="item.name!">
+                <th 
+                    [ngStyle]="{
+                        'background-color': '#24477f'
+                    }"
+                    mat-header-cell
+                    class="pl-5"
+                    *matHeaderCellDef
+                ><span>{{item.displayedName}}</span></th>
+                <td
+                    mat-cell
+                    *matCellDef="let element; let indice = index"
+                    [attr.data-label]="item.displayedName"
+                    [ngClass]="{
+                        'w-full md:w-2/5 pl-0': item.type === 'construccion',
+                        'pl-0 md:pl-4  ': item.type !== 'construccion',
+                        'text-center': item.type === 'acciones' || item.type === 'photo',
+                        'text-right': item.type === 'decimal'
+                    }"
+                >
+                    @switch (item.type) {
+                        @case ("estado") {
+                            <div class="pill">
+                                <bi-pill
+                                    [text]="defineTextPill(element[item.name!])"
+                                    [type]="+element[item.name!]">
+                                </bi-pill>
+                            </div>
+                        }
+                        @case ("acciones") {
+                            <div class="flex flex-row items-center gap-x-4">
+                                @if (showIconEdit) {
+                                    <button
+                                        matTooltip="Editar"
+                                        mat-icon-button (click)="editNode(element)">
+                                        <mat-icon>
+                                        edit
+                                        </mat-icon>
+                                    </button>
+                                }
+
+                                @if (showIconDelete) {
+                                    <button
+                                        matTooltip="Eliminar"
+                                        mat-icon-button (click)="deleteNode(element)">
+                                        <mat-icon>
+                                        delete
+                                        </mat-icon>
+                                    </button>
+                                }
+                                <!-- @if (item.name === 'none' || element[item.name!]) {
+                                    @for (icon of icons; track $index) {
+                                        <span [matTooltip]="icon.tooltip!">
+                                            <button
+                                                mat-icon-button
+                                                (click)="
+                                                    executeIcon(icon, element, item.subName ? indice : -1);
+                                                    $event.stopPropagation()
+                                                ">
+                                                Ver detalle
+                                               
+                                            </button>
+                                        </span>
+                                    }
+                                } -->
+                            </div>
+                            <!-- <button (click)="executeIcon()">Ver detalle</button> -->
+                        }
+                        @default {
+                            {{element[item.name!]}}
+                        }
+                    }
+                </td>
+            </ng-container>
+        }
+      
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell text-center label-text-13" [attr.colSpan]="headers.length">
+                <br>
+                No se encontraron datos
+            </td>
+        </tr>
+    </table>
+    @if(loading){
+        <div class="loading-overlay">
+            <mat-spinner diameter="40"></mat-spinner>
+            <div class="loading-text">Cargando...</div>
+        </div>
+    }
+</div>
+  
+  

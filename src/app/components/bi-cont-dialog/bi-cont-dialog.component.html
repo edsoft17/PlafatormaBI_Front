@@ -1,0 +1,56 @@
+<div class="dialog-header">
+    <h2 class="inter-title-modal label-text-13">
+        {{title}}
+    </h2>
+    <button mat-icon-button type="button" aria-label="Boton para cerrar modal" (click)="clickclosed()" id="boton_cerrar">
+        <mat-icon>clear</mat-icon>
+    </button>
+</div>
+<div mat-dialog-content class="pb-1 text-roboto-label dialog-body h-auto px-4">
+    <!-- <div class="pb-1 text-roboto-label py-5 px-6 overflow-auto"> -->
+        <ng-content></ng-content>
+</div>
+<!-- <div class="flex justify-between items-start">
+    <div>
+        @if(!hideTitle) {
+            <h1 class="inter-title-modal">
+                @if(titleFull) {
+                    {{ titleFull }}
+                } @else {
+                    {{ saved | transloco }} {{ title }}
+                }
+            </h1>
+        }
+        @if(verifyString(subTitle)){
+            <h4 class="text-md">{{ subTitle }}</h4>
+        } @else {
+            @for (item of subTitle; track item) {
+                <h4 class="text-md">{{ item }}</h4>
+            }
+        }
+    </div>
+    <button mat-icon-button type="button" aria-label="Boton para cerrar modal" (click)="clickclosed()" id="boton_cerrar">
+        <mat-icon [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+    </button>
+</div>
+<div mat-dialog-content class="pb-1 text-roboto-label dialog-body h-auto">
+    <ng-content></ng-content>
+</div>
+<ng-content select="[log]"></ng-content>
+@if(!hideButtons) {
+    <div mat-dialog-actions class="flex justify-evenly mt-auto">
+        <bu-button 
+            (click)="clickclosed()"
+            [text]="'componentsModal.close' | transloco"
+            [typeButton]="buttonEnum.CANCEL"> </bu-button>
+        <bu-button
+            [nameForm]="nameForm"
+            [disabled]="disabledButton"
+            [typeButton]="buttonEnum.SEND"
+            [text]="getNameButton() | transloco"
+            (eventAction)="eventClick()"
+            [attr.form]="nameForm">
+        </bu-button>
+    </div>
+} -->
+

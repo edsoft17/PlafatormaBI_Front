@@ -1,0 +1,153 @@
+<!-- <div class="layout-container">
+    <ui-sidebar></ui-sidebar>
+    <router-outlet></router-outlet>
+</div> -->
+
+<!-- <div class="layout">
+    <ui-navbar></ui-navbar>
+    <div class="layout__main">
+      <ui-sidebar></ui-sidebar>
+      <div class="layout__content">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+</div> -->
+
+<div class="sidebar label-text-13" [class.sidebar-close]="!openSidebar">
+  <div class="logo-details">
+    <div [ngClass]="{'logo': openSidebar}">
+      @if (openSidebar) {
+        <img src="../../../../assets/logo/logo_linea_GEOP.png" alt="">
+      } @else {
+        <img class="logo-img" src="../../../../assets/logo/logo.png" alt="">
+      }
+    </div>
+  </div>
+  <ul class="nav-links" id="nav-links">
+    @for (item of listModules.modulos; track $index) {
+      <li #itemEl routerLinkActive="active">
+        @if (item.accionesMenu.length === 0) {
+          <div class="dropdown-title">
+            <a [routerLink]="[item.url]">
+              <i [class]="item.icono"></i>
+              <span class="link_name">{{ item.nombre }}</span>
+            </a>
+          </div>
+        }
+        @if (item.accionesMenu.length > 0) {
+          <div
+            class="dropdown-title"
+            (click)="showSubmenu(itemEl)"
+          >
+            <a>
+              <i>
+                <mat-icon>{{item.icono}}</mat-icon>
+              </i>
+              <span class="link_name">{{ item.nombre }}</span>
+            </a>
+            <i class="bx bxs-chevron-down arrow"></i>
+          </div>
+        }
+        <ul class="sub-menu" [class.blank]="item.accionesMenu.length == 0">
+          <li>
+            <a class="link_name">{{ item.nombre }}</a>
+          </li>
+          @for (subitem of item.accionesMenu; track $index) {
+            <li routerLinkActive="active">
+              <div class="submenu label-text-13">
+                <div>
+                  <mat-icon>{{subitem.icono}}</mat-icon>
+                </div>
+                <a [routerLink]="subitem.url" class="mover" routerLinkActive="active" (click)="selectMenu(item,subitem)">{{ subitem.nombre }}</a>
+              </div>
+            </li>
+          }
+        </ul>
+      </li>
+      <!-- <li *ngFor="let item of menuSidebar" #itemEl routerLinkActive="active">
+        <div *ngIf="item.sub_menu.length == 0" class="dropdown-title">
+          <a [routerLink]="[item.link]">
+            <i [class]="item.icon"></i>
+            <span class="link_name">{{ item.link_name }}</span>
+          </a>
+        </div>
+        <div
+          *ngIf="item.sub_menu.length > 0"
+          class="dropdown-title"
+          (click)="showSubmenu(itemEl)"
+        >
+          <a>
+            <i [class]="item.icon"></i>
+            <span class="link_name">{{ item.link_name }}</span>
+          </a>
+          <i class="bx bxs-chevron-down arrow"></i>
+        </div>
+        <ul class="sub-menu" [class.blank]="item.sub_menu.length == 0">
+          <li>
+            <a class="link_name">{{ item.link_name }}</a>
+          </li>
+          <li *ngFor="let item_sub of item.sub_menu" routerLinkActive="active">
+            <a [routerLink]="[item_sub.link]">{{ item_sub.link_name }}</a>
+          </li>
+        </ul>
+      </li> -->
+    }
+  </ul>
+</div>
+<section class="home-section label-text-13">
+  <div class="home-header">
+    <div class="hamburger-menu">
+      <input
+        type="checkbox"
+        id="checkbox-hamburger-menu"
+        [(ngModel)]="openSidebar"
+      />
+      <label class="label-hamburger-menu" for="checkbox-hamburger-menu">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </label>
+    </div>
+    <!-- <mat-form-field class="body__flow">
+      <mat-select [(ngModel)]="currentCompanyId" name="food">
+      @for (company of companies; track company) {
+          <mat-option [value]="company.id">{{company.brandName}}</mat-option>
+      }
+      </mat-select>
+  </mat-form-field> -->
+  <!-- <div class="flex items-center gap-x-4 label-text-13">
+    <h4 class="label-text-13">Operación</h4>
+    <mat-form-field class="body__flow" style="padding-bottom: 0px;">
+        <mat-select class="label-text-13" [(ngModel)]="currentCompanyId" name="food">
+        @for (company of companies; track company) {
+            <mat-option class="label-text-13" [value]="company.id">{{company.brandName}}</mat-option>
+        }
+        </mat-select>
+    </mat-form-field>
+  </div> -->
+  <div class="flex items-center gap-x-4">
+    <h4 class="label-text-12 text-gray-700">Operación</h4>
+    <mat-form-field class="body__flow !pb-0 w-full">
+      <mat-select 
+        class="label-text-13"
+        panelClass="custom-select-panel"
+        [(ngModel)]="currentCompanyId" 
+        name="food">
+        @for (company of companies; track company) {
+          <mat-option class="label-text-13" [value]="company.id">
+            {{company.brandName}}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <button class="pr-4" mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+      <mat-icon>person</mat-icon>
+    </button>
+  </div>
+    <!-- <div class="title">
+    </div> -->
+  </div>
+  <div class="home-view">
+    <router-outlet></router-outlet>
+  </div>
+</section>

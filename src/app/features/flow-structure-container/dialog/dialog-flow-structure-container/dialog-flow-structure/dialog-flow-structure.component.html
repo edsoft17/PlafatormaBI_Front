@@ -1,0 +1,227 @@
+<bi-cont-dialog [title]="'Detalles de estructura de flujo'">
+  <div class="structure">
+    <div class="structure__header">
+      <h3 class="structure__title">Flujo</h3>
+      <form class="structure__form label-text-12" [formGroup]="form">
+        <p>Tipo de flujo: </p>
+        <mat-form-field class="structure__flow">
+          <mat-select class="label-text-13" placeholder="Seleccione el tipo de flujo" formControlName="flowType">
+            @for (type of flowTyes; track $index) {
+                <mat-option class="label-text-13" [value]="type.flowTypeId">{{type.name}}</mat-option>
+            }
+          </mat-select>
+          @if (form.get('flowType')?.invalid && (form.get('flowType')?.touched || form.get('flowType')?.dirty)) {
+            <mat-error class="text-red-500">
+              {{ verificationError("flowType") }}
+            </mat-error>
+          }
+        </mat-form-field>
+        <p>Nombre: </p>
+        <mat-form-field>
+          <input class="label-text-13" matInput formControlName="name">
+          @if (form.get('name')?.invalid && (form.get('name')?.touched || form.get('name')?.dirty)) {
+            <mat-error class="text-red-500">
+              {{ verificationError("name") }}
+            </mat-error>
+          }
+        </mat-form-field>
+        @if(!currentHeader) {
+          <bi-button 
+            class="structure__button"
+            [disabledButton]="form.invalid || form.disabled"
+            [ngClass]="{'bg-gray-200 text-gray-500 cursor-not-allowed': form.invalid}"
+            [typeBI]="buttonType.Accept"
+            [text]="'Agregar'"
+            (eventAction)="showTree()"/>
+        }
+      </form>
+    </div>
+    <div class="structure__data">
+      @if (canShowTree) {
+        @if (loadingTree()) {
+          <div class="flex justify-center">
+            <mat-spinner></mat-spinner>
+          </div>
+        } @else {
+          <div class="structure__tree">
+            <bi-button
+              class="mt-4 pb-6 block"
+              [text]="'Agregar nivel uno'"
+              [typeBI]="buttonType.Accept"
+              (eventAction)="openDialogStructure(createDataDialog(false))">
+            </bi-button>
+            
+            <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="container-section example-tree">
+              <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle [ngClass]="{'level-selected': (currentNode) ? currentNode.levelName === node?.levelName : false}">
+                  <p class="pl-2 pr-2" style="margin-bottom: 0px !important;">
+                    {{node.levelName}}
+                  </p>
+                  <div class="ml-2">
+                    <button mat-icon-button [matMenuTriggerFor]="menu" (click)="menuContextNode = node" aria-label="Example icon-button with a menu">
+                      <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <!-- @if (node.levelId !== 3) {
+                      <button
+                        matTooltip="Agregar estructura"
+                        mat-icon-button (click)="openDialogStructure(createDataDialog(false,node))">
+                        <mat-icon class="mat-icon-rtl-mirror">
+                            add
+                        </mat-icon>
+                      </button>
+                    } @else if (node.levelId === 3) {
+                      <button
+                        matTooltip="Asociar cuentas contables"
+                        mat-icon-button (click)="getLedgerAccounts(node)">
+                        <mat-icon class="mat-icon-rtl-mirror">
+                          link
+                        </mat-icon>
+                      </button>
+                    }
+                    <button
+                      matTooltip="Editar estructura"
+                      mat-icon-button (click)="openDialogStructure(createDataDialog(true,node))">
+                      <mat-icon class="mat-icon-rtl-mirror">
+                          edit
+                      </mat-icon>
+                    </button>
+                    <button
+                      matTooltip="Eliminar estructura"
+                      mat-icon-button (click)="deleteNode(node)">
+                      <mat-icon class="mat-icon-rtl-mirror">
+                          delete
+                      </mat-icon>
+                    </button> -->
+                  </div>
+              </mat-tree-node>
+              <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
+                  <div class="mat-tree-node">
+                    <button mat-icon-button matTreeNodeToggle
+                            [attr.aria-label]="'Toggle ' + node.levelName">
+                      <mat-icon class="mat-icon-rtl-mirror">
+                        {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                      </mat-icon>
+                    </button>
+                    <p class="pl-2 pr-2" style="margin-bottom: 0px !important;"><!-- label-text-12 -->
+                      {{node.levelName}}
+                    </p>
+                    <div class="ml-2">
+                      <button mat-icon-button [matMenuTriggerFor]="menu" (click)="menuContextNode = node" aria-label="Example icon-button with a menu">
+                        <mat-icon>more_vert</mat-icon>
+                      </button>
+                      <!-- <button
+                        size="small"
+                        class="small-icon-button"
+                        matTooltip="Agregar estructura"
+                        mat-icon-button (click)="openDialogStructure(createDataDialog(false,node))">
+                        <mat-icon>
+                            add
+                        </mat-icon>
+                      </button>
+                      <button
+                        matTooltip="Editar estructura"
+                        mat-icon-button (click)="openDialogStructure(createDataDialog(true,node))">
+                        <mat-icon class="mat-icon-rtl-mirror">
+                            edit
+                        </mat-icon>
+                      </button>
+                      <button
+                        matTooltip="Eliminar estructura"
+                        mat-icon-button (click)="deleteNode(node)">
+                        <mat-icon class="mat-icon-rtl-mirror">
+                            delete
+                        </mat-icon>
+                      </button> -->
+                    </div>
+                  </div>
+                  <!-- There is inline padding applied to this div using styles.
+                      This padding value depends on the mat-icon-button width.  -->
+                  <div [class.example-tree-invisible]="!treeControl.isExpanded(node)"
+                      role="group">
+                    <ng-container matTreeNodeOutlet></ng-container>
+                </div>
+              </mat-nested-tree-node>
+            </mat-tree>
+          </div>
+          @if (currentNode) {
+              <!-- <mat-divider [vertical]="true" class="px-2"></mat-divider> -->
+            <div class="structure__accounts">
+              <div class="flex flex-col">
+                <h3 class="label-text-13 structure__title">Cuentas contables</h3>
+                <div [formGroup]="filterForm" class="flex justify-around filter-section">
+                  <mat-checkbox formControlName="filter90">90</mat-checkbox>
+                  <mat-checkbox formControlName="filter94">94</mat-checkbox>
+                  <mat-checkbox formControlName="filter95">95</mat-checkbox>
+                  <bi-button [typeBI]="buttonType.Other" [text]="'Asociar cuentas'" (eventAction)="getAccountsFiltered()"></bi-button>
+                </div>
+                <app-tree-checkboxes
+                  class="structure__checkboxes"
+                  [accountsTree]="accountsTree"
+                  [assignedAccountCodes]="assignedAccountCodes"
+                  (selectedAccountsChange)="handleSelectedAccounts($event)"
+                >
+                </app-tree-checkboxes>
+              </div>
+            </div>
+            @if(showAssociatedAccount) {
+              <!-- <mat-divider [vertical]="true" class="px-2"></mat-divider> -->
+              <div class="structure__associated-accounts">
+                <div class="flex flex-col">
+                  <h3 class="label-text-13 structure__title">Cuentas contables asociadas</h3>
+                  <div class="flex justify-between">
+                    <div class="flex flex-col">
+                      <p class="label-text-12 font-medium">Categoría seleccionada: <span class="font-normal ml-3">{{currentNode.levelName}}</span></p>
+                      <p class="label-text-12 font-medium">Monto del presupuesto: <span class="font-normal ml-3">{{currentNode.budgetAmount}}</span></p>
+                      <p class="label-text-12 font-medium">Cantidad: <span class="font-normal ml-3">{{currentNode.unitQuantity}}</span></p>
+                    </div>
+                    <div class="flex justify-center">
+                      <bi-button [typeBI]="buttonType.Other" [text]="'Asignar'" (eventAction)="assignAccount()"></bi-button>
+                    </div>
+                  </div>
+                  <mat-divider class="py-3"></mat-divider>
+                  <div class="account-container">
+                    <p class="label-text-13 font-medium">Cuentas elegidas</p>
+                    <div class="flex flex-col gap-y-5 p-x-3">
+                      @for (account of filteredAccounts; track $index) {
+                        <span class="label-text-12">{{account.account}}</span>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+          }
+          <!-- <div class="flex h-8">
+          </div> -->
+        }
+      }
+    </div>
+  </div>
+  @if (flowStructureList.length > 0) {
+    <div class="flex justify-end">
+      <bi-button class="boton-guardar" [typeBI]="buttonType.Accept" [text]="'Guardar'" (eventAction)="saveStructure()"></bi-button>
+    </div>
+  }
+  <mat-menu #menu="matMenu">
+    @if(menuContextNode && menuContextNode.levelId !== 3){
+      <button mat-menu-item (click)="openDialogStructure(createDataDialog(false,menuContextNode))">
+        <mat-icon>add</mat-icon>
+        <span>Agregar estructura</span>
+      </button>
+    }
+    <button mat-menu-item (click)="openDialogStructure(createDataDialog(true,menuContextNode))">
+      <mat-icon>edit</mat-icon>
+      <span>Editar estructura</span>
+    </button>
+    <button mat-menu-item (click)="deleteNode(menuContextNode)">
+      <mat-icon>delete</mat-icon>
+      <span>Eliminar estructura</span>
+    </button>
+    @if(menuContextNode && menuContextNode.levelId === 3) {
+      <button mat-menu-item (click)="getLedgerAccounts(menuContextNode)">
+        <mat-icon>link</mat-icon>
+        <span>Asociar cuentas contables</span>
+      </button>
+    }
+  </mat-menu>
+</bi-cont-dialog>
+

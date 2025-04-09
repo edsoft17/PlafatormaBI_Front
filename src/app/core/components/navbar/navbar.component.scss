@@ -1,0 +1,28 @@
+.navbar {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #333;
+    color: white;
+}
+  
+.navbar__brand {
+    font-size: 1.5em;
+}
+  
+.navbar__menu {
+    display: flex;
+    gap: 10px;
+}
+  
+.navbar__item {
+    color: white;
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+  
+.navbar__item:hover {
+    background-color: #555;
+}

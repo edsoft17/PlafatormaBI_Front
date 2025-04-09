@@ -1,0 +1,14 @@
+<button 
+    mat-button
+    class="label-text-13"
+    [ngClass]="
+        {
+            'button-accept': typeBI === buttonType.Accept, 
+            'button-cancel': typeBI === buttonType.Cancel,
+            'button-other': typeBI === buttonType.Other,
+            'button-disabled': disabledButton
+        }"
+    [disabled]="disabledButton"
+    (click)="actionClick()">
+        {{text}}
+</button>

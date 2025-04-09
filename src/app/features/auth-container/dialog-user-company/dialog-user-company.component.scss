@@ -1,0 +1,15 @@
+.dialog{
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.dialog__header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.dialog__footer {
+    display: flex;
+    justify-content: space-around;
+}

@@ -1,0 +1,54 @@
+<bi-cont-dialog [title]="'Estructura'">
+    <form [formGroup]="form" class="structure-form label-text-12">
+        <p class="label-text-12">Nombre: </p>
+        <mat-form-field>
+            <input class="label-text-13" matInput formControlName="levelName">
+            @if (form.get('levelName')?.invalid && (form.get('levelName')?.touched || form.get('levelName')?.dirty)) {
+                <mat-error class="text-red-500">
+                  {{ verificationError("levelName") }}
+                </mat-error>
+              }
+        </mat-form-field>
+        @if((dataDialog.currentNode?.levelId === 2 && !dataDialog.isEdit) || dataDialog.currentNode?.levelId === 3) {
+            <p class="label-text-12">Monto del presupuesto: </p>
+            <mat-form-field>
+                <input class="label-text-13" type="number" matInput formControlName="budgetAmount">
+            </mat-form-field>
+            <p class="label-text-12">Cantidad: </p>
+            <mat-form-field>
+                <input class="label-text-13" type="number" matInput formControlName="unitQuantity">
+            </mat-form-field>
+        }
+        @if(!dataDialog.isEdit) {
+            <bi-button class="mr-auto label-text-13" [text]="'Agregar'" [disabledButton]="form.invalid" [typeBI]="buttonType.Accept" (eventAction)="addToTable()"></bi-button>
+        }
+    </form>
+    @if (invalidName) {
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-3 mb-3" role="alert">
+            <strong class="font-bold">Nombre inválido!</strong>
+            <span class="block sm:inline">Ya existe una estructura con el mismo nombre.</span>
+            <!-- <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+              <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
+            </span> -->
+        </div>
+    }
+    @if(!dataDialog.isEdit) {
+        <bi-table
+            showIconDelete
+            [loading]="loading"
+            [headers]="columnsHeaderStructure"
+            [data]="list"
+            (eventDeleteRow)="deleteRow($event)"
+        >
+        </bi-table>
+    }
+    <div class="flex justify-center">
+        <bi-button
+            class="mt-4 block label-text-13"
+            [disabledButton]="(dataDialog.isEdit) ? false :structures().length === 0" 
+            [typeBI]="buttonType.Accept" 
+            [text]="(dataDialog.isEdit) ? 'Editar estructura' : 'Enviar estructura'" 
+            (eventAction)="sendNode()">
+        </bi-button>
+    </div>
+</bi-cont-dialog>

@@ -1,0 +1,20 @@
+<nav class="navbar">
+    <div class="navbar__menu">
+        <form class="example-form">
+            <mat-form-field class="example-full-width">
+              <mat-label>Empresa</mat-label>
+              <input type="text"
+                     placeholder="Pick one"
+                     aria-label="Number"
+                     matInput
+                     [formControl]="myControl"
+                     [matAutocomplete]="auto">
+              <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                @for (option of filteredOptions | async; track option) {
+                  <mat-option [value]="option">{{option.brandName}}</mat-option>
+                }
+              </mat-autocomplete>
+            </mat-form-field>
+          </form>
+    </div>
+</nav>
