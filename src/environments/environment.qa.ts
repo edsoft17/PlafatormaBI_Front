@@ -1,3 +1,3 @@
 export const environment = {
-    baseUrlBI: "https://soluciones.linea.pe/aplicativos/api_lineaBI",
+    baseUrlBI: "http://lineaback.somee.com"//"https://soluciones.linea.pe/aplicativos/api_lineaBI",
 };
