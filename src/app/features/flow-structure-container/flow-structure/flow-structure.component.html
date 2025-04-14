@@ -1,7 +1,9 @@
 <ui-bi-cont-body class="body" [title]="'Estructura de flujo'">
     <div class="body__buttons label-text-12">
         @for (button of listActions; track $index) {
-            <button class="bg-gray-300" (click)="actionButton(button.codigo)">{{button.nombre}}</button>
+            @if (button.codigo === "ctrflo_a03") {
+                <button class="bg-gray-300" (click)="actionButton(button.codigo)">{{button.nombre}}</button>
+            }
         }
     </div>
     <div class="flex items-center gap-x-4">
