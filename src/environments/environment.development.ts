@@ -1,3 +1,3 @@
 export const environment = {
-    baseUrlBI: "http://localhost:7046"
+    baseUrlBI: "https://localhost:7046"
 };

@@ -120,7 +120,7 @@ export class AuthContainerComponent implements OnInit {
             localStorage.setItem("currentCompany",String(this._userCompanyService.currentCompany()?.id));
             const menu = await this.getMenu();
             this._menuService.listMenu.set(menu);
-            this._router.navigate(["","dashboard"]);
+            this._router.navigate(["","dashboard-operacion"]);
           }
         }
       }
@@ -139,6 +139,8 @@ export class AuthContainerComponent implements OnInit {
       this._spinnerService.hide();
       if(response.status.status === 200) {
         localStorage.setItem("menu",JSON.stringify(response.data));
+        localStorage.setItem("operations",JSON.stringify(response.data.asignables));
+        localStorage.setItem("currentOperation","O202");//por defecto por mientras
         return response.data
       }
       return null;

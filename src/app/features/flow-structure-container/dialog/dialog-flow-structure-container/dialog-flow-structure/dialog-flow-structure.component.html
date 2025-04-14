@@ -52,7 +52,7 @@
             </bi-button>
             
             <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="container-section example-tree">
-              <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle [ngClass]="{'level-selected': (currentNode) ? currentNode.levelName === node?.levelName : false}">
+              <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle [ngClass]="{'level-selected': (currentNode) ? currentNode.order === node?.order : false}">
                   <p class="pl-2 pr-2" style="margin-bottom: 0px !important;">
                     {{node.levelName}}
                   </p>

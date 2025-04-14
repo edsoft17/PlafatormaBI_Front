@@ -1,27 +1,260 @@
-<p>dashboard works!</p>
+<div class="flex space-x-3 p-4 items-center">
+  <div>
+    <p>Flujo: </p>
+    <mat-form-field>
+        <mat-select class="label-text-13" [(ngModel)]="currentHeaderFlow" placeholder="Seleccione el tipo de flujo">
+        @for (header of flowHeaders(); track $index) {
+            <mat-option class="label-text-13" [value]="header.structureHeaderId">{{header.name}}</mat-option>
+        }
+        </mat-select>
+    </mat-form-field>
+  </div>
+  <div>
+    <p class="label-text-13">Desde: </p>
+    <mat-form-field>
+      <input class="label-text-13" matInput [matDatepicker]="startDatePicker" [formControl]="startDate" readonly>
+      <mat-datepicker-toggle matIconSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+      <mat-datepicker #startDatePicker
+                    startView="multi-year"
+                    (monthSelected)="setMonthAndYear2($event, startDatePicker)"
+                    panelClass="month-year-picker">
+      </mat-datepicker>
+    </mat-form-field>
+  </div>
+  <div>
+    <p class="label-text-13">Hasta: </p>
+    <mat-form-field>
+      <input class="label-text-13" matInput [matDatepicker]="endDatePicker" [formControl]="endDate" readonly>
+      <mat-datepicker-toggle matIconSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+      <mat-datepicker #endDatePicker
+                    startView="multi-year"
+                    (monthSelected)="setMonthAndYear($event, endDatePicker)"
+                    panelClass="month-year-picker">
+      </mat-datepicker>
+    </mat-form-field>
+  </div>
+  <button 
+    color="primary"
+     mat-icon-button
+     (click)="getDataDashboard()">
+    <mat-icon>search</mat-icon>
+  </button>
+</div>
 <!-- barra -->
-<!-- <canvas baseChart
-  [data]="barChartData"
-  [options]="barChartOptions"
-  [type]="'bar'">
-</canvas> -->
-<!-- lineal -->
-<!-- <canvas baseChart
-  [data]="lineChartData"
-  [options]="lineChartOptions"
-  [type]="'line'">
-</canvas> -->
-<!-- pie chart -->
- <!-- <div class="chart">
-     <canvas baseChart
-         [data]="pieChartData"
-         [options]="pieChartOptions"
-         [type]="'pie'">
-     </canvas>
- </div> -->
-
- <canvas baseChart
-    [data]="combinedChartData"
-    [options]="combinedChartOptions"
-    [type]="combinedChartType">
-</canvas>
+<div class="grid grid-cols-6 m-7 gap-x-6 gap-y-12">
+  <div class="col-span-2" [ngClass]="{'place-self-center': loadingAccumulatedIncome()}">
+    @if (loadingAccumulatedIncome()) {
+      <mat-spinner></mat-spinner>
+    } @else {
+      <h3 class="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4 text-center">
+        Rentabilidad acumulada
+      </h3>
+      <div class="max-w-md mx-auto bg-white rounded-xl shadow py-6 px-3 grid grid-cols-2 gap-4">
+        @for (accumulated of accumulated(); track $index) {
+          @switch(accumulated.order) {
+            @case(1) {
+              <div class="col-span-2 text-center bg-blue-50 p-4 rounded-md shadow-sm">
+                <p class="text-sm text-gray-500">{{accumulated.name}}</p>
+                <p class="text-2xl font-bold text-blue-700">{{accumulated.value | currency:'PEN':'symbol':'1.2-2':'es-PE'}}</p>
+              </div>
+            }
+            @case (2) {
+              <div class="text-center bg-green-50 p-4 rounded-md shadow-sm">
+                <p class="text-sm text-gray-500">{{accumulated.name}}</p>
+                <p class="text-xl font-semibold text-green-600">{{accumulated.value | currency:'PEN':'symbol':'1.2-2':'es-PE'}}</p>
+              </div>
+            }
+            @case (3) {
+              <div class="text-center bg-yellow-50 p-4 rounded-md shadow-sm">
+                <p class="text-sm text-gray-500">{{accumulated.name}}</p>
+                <p class="text-xl font-semibold text-yellow-600">{{accumulated.value | currency:'PEN':'symbol':'1.2-2':'es-PE'}}</p>
+              </div>
+            }
+          }
+        }
+      </div>
+    }
+  </div>
+  <div class="col-span-2" [ngClass]="{'place-self-center': loadingMonthlyAccumulatedIncome()}">
+    @if (loadingMonthlyAccumulatedIncome()) {
+      <mat-spinner></mat-spinner>
+    } @else {
+      <div>
+        <h3 class="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4 text-center">
+          Rentabilidad mes por mes
+        </h3>
+        <div class="h-80">
+          <canvas
+            baseChart
+            [data]="monthlyProfitabilityChartData?.chartData"
+            [options]="monthlyProfitabilityChartData?.chartOptions"
+            [legend]="true"
+            type="bar"
+          >
+          </canvas>
+        </div>
+      </div>
+    }
+  </div>
+  <div class="col-span-2" [ngClass]="{'place-self-center': loadingMonthlyIncomeDetails()}">
+    @if (loadingMonthlyIncomeDetails()) {
+      <mat-spinner></mat-spinner>
+    } @else {
+      <div>
+        <h3 class="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4 text-center">
+          Ventas y Costos vs presupuestos
+        </h3>
+        <div class="h-80">
+          <canvas
+            baseChart
+            [data]="monthlySalesVsCostsChartData?.chartData"
+            [options]="monthlySalesVsCostsChartData?.chartOptions"
+            type="bar">
+          </canvas>
+        </div>
+      </div>
+    }
+  </div>
+  <div class="col-span-3" [ngClass]="{'place-self-center': loadingAccumulatedReportByTypeI()}">
+    @if (loadingAccumulatedReportByTypeI()) {
+      <mat-spinner></mat-spinner>
+    } @else {
+      <div>
+        <h3 class="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4 text-center">
+          Ventas acumuladas
+        </h3>
+        <mat-table [dataSource]="dataSourceI" class="mat-elevation-z8">
+          <ng-container matColumnDef="parentLevelName">
+            <mat-header-cell mat-header-cell *matHeaderCellDef> Nombre </mat-header-cell>
+            <mat-cell mat-cell *matCellDef="let element"> {{element.parentLevelName.trim()}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="executedAmount">
+            <mat-header-cell mat-header-cell *matHeaderCellDef> Monto ejecutado </mat-header-cell>
+            <mat-cell mat-cell *matCellDef="let element"> {{element.executedAmount | currency:'PEN':'symbol':'1.2-2':'es-PE'}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="budgetedAmount">
+            <mat-header-cell mat-header-cell *matHeaderCellDef> Presupuesto </mat-header-cell>
+            <mat-cell mat-cell *matCellDef="let element"> {{element.budgetedAmount | currency:'PEN':'symbol':'1.2-2':'es-PE'}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="difference">
+            <mat-header-cell mat-header-cell *matHeaderCellDef> Diferencia </mat-header-cell>
+            <mat-cell mat-cell *matCellDef="let element"> {{element.difference | currency:'PEN':'symbol':'1.2-2':'es-PE'}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="percentage">
+            <mat-header-cell mat-header-cell *matHeaderCellDef> Porcentaje </mat-header-cell>
+            <mat-cell mat-cell *matCellDef="let element"> 
+              <div class="w-40">
+                <mat-progress-bar
+                  [value]="getAbsolutePercentage(element.percentage)"
+                  [color]="element.percentage >= 0 ? 'primary' : 'warn'"
+                  mode="determinate"
+                ></mat-progress-bar>
+                <span class="text-xs mt-1 block text-center">
+                  {{ element.percentage | percent:'1.2-2':'es-PE' }}
+                </span>
+              </div>
+            </mat-cell>
+          </ng-container>
+        
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row matRipple *matRowDef="let row; columns: displayedColumns; let i = index" (click)="showChartIncome(row,i)" [ngClass]="{'highlight-row': firstIndexTable === i}"></mat-row>
+        </mat-table>
+      </div>
+    }
+  </div>
+  <div class="col-span-3" [ngClass]="{'place-self-center': loadingChartI()}">
+    @if (loadingChartI()) {
+      <mat-spinner></mat-spinner>
+    } @else {
+      <div>
+        <h3 class="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4 text-center">
+          Costos y gastos acumulados
+        </h3>
+        <div class="h-80">
+          <canvas
+            baseChart
+            [data]="incomeReportChartData?.chartData"
+            [options]="incomeReportChartData?.chartOptions"
+            [legend]="true"
+            type="bar"
+          >
+          </canvas>
+        </div>
+      </div>
+    }
+  </div>
+  <!-- <div class="col-span-2"></div> -->
+  <div class="col-span-3" [ngClass]="{'place-self-center': loadingAccumulatedReportByTypeE()}">
+    @if (loadingAccumulatedReportByTypeE()) {
+      <mat-spinner></mat-spinner>
+    } @else {
+      <div>
+        <h3 class="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4 text-center">
+          Costos y gastos acumulados
+        </h3>
+        <mat-table [dataSource]="dataSourceE" class="mat-elevation-z8 auto-width-table">
+          <ng-container matColumnDef="parentLevelName">
+            <mat-header-cell mat-header-cell *matHeaderCellDef> Nombre </mat-header-cell>
+            <mat-cell mat-cell *matCellDef="let element"> {{element.parentLevelName}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="executedAmount">
+            <mat-header-cell mat-header-cell *matHeaderCellDef> Monto ejecutado </mat-header-cell>
+            <mat-cell mat-cell *matCellDef="let element"> {{element.executedAmount | currency:'PEN':'symbol':'1.2-2':'es-PE'}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="budgetedAmount">
+            <mat-header-cell mat-header-cell *matHeaderCellDef> Presupuesto </mat-header-cell>
+            <mat-cell mat-cell *matCellDef="let element"> 
+              <div class="w-12">
+                {{element.budgetedAmount | currency:'PEN':'symbol':'1.2-2':'es-PE'}} 
+  
+              </div>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="difference">
+            <mat-header-cell mat-header-cell *matHeaderCellDef> Diferencia </mat-header-cell>
+            <mat-cell mat-cell *matCellDef="let element"> {{element.difference | currency:'PEN':'symbol':'1.2-2':'es-PE'}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="percentage">
+            <mat-header-cell mat-header-cell *matHeaderCellDef> Porcentaje </mat-header-cell>
+            <mat-cell mat-cell *matCellDef="let element"> 
+              <div class="w-40">
+                <mat-progress-bar
+                  [value]="getSafePercentage(element.percentage)"
+                  [color]="element.percentage >= 0 ? 'primary' : 'warn'"
+                  mode="determinate"
+                ></mat-progress-bar>
+                <span class="text-xs mt-1 block text-center">
+                  <span>{{ element.percentage | number:'1.2-2' }}%</span>
+                </span>
+              </div>
+            </mat-cell>
+          </ng-container>
+        
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row matRipple *matRowDef="let row; columns: displayedColumns; let i = index" (click)="showChartExpense(row,i)" [ngClass]="{'highlight-row': secondIndexTable === i}"></mat-row>
+        </mat-table>
+      </div>
+    }
+  </div>
+  <div class="col-span-3" [ngClass]="{'place-self-center': loadingChartE()}">
+    @if (loadingChartE()) {
+      <mat-spinner></mat-spinner>
+    } @else {
+      <div>
+        <h3 class="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4 text-center">
+          Costos y gastos acumulados
+        </h3>
+        <div class="h-80">
+          <canvas
+            baseChart
+            [data]="expenseReportChartData?.chartData"
+            [options]="expenseReportChartData?.chartOptions"
+            [legend]="true"
+            type="bar"
+          >
+          </canvas>
+        </div>
+      </div>
+    }
+  </div>
+</div>

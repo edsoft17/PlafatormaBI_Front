@@ -5,7 +5,7 @@
         </div>
         <h2 class="login__title label-text-13">Inicio Sesión</h2>
         <form [formGroup]="authForm" class="login__form" (ngSubmit)="signIn()">
-            <mat-form-field>
+            <mat-form-field class="w-full">
                 <mat-label class="label-text-12">Tipo de documento</mat-label>
                 <mat-select class="label-text-13" formControlName="typeDocument">
                   @for (type of typesDocument; track $index) {
@@ -17,18 +17,21 @@
                 } -->
                 <!-- <mat-hint>{{animalControl.value?.sound}}</mat-hint> -->
             </mat-form-field>
-            <mat-form-field>
+            <mat-form-field class="w-full">
                 <mat-label class="label-text-12">Documento</mat-label>
                 <input class="label-text-13" matInput formControlName="document">
             </mat-form-field>
-            <mat-form-field class="login__input label-text-12">
+            <mat-form-field class="login__input label-text-12 w-full">
                 <mat-label>Contraseña</mat-label>
                 <input matInput [type]="hide ? 'password' : 'text'" formControlName="password">
                 <!-- <button type="button" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
                   <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
                 </button> -->
             </mat-form-field>
-            <button mat-button class="login__button label-text-13" [disabled]="authForm.invalid">INGRESAR</button>
+            <div>
+              <ui-captcha (eventGetToken)="getTokenCaptcha($event)"></ui-captcha>
+            </div>
+            <button mat-button class="login__button label-text-13" [disabled]="authForm.invalid || !tokenRecatpcha()">INGRESAR</button>
         </form>
     </div>
 </div>

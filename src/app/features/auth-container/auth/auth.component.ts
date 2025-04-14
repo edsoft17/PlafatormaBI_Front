@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output, signal, ViewEncapsulation } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
@@ -11,12 +11,20 @@ import { AuthPresenter } from './auth.presenter';
 import { TypeDocument } from 'app/core/models/type-document.model';
 import { FormLogin } from './auth.models';
 import { DialogUserCompanyComponent } from '../dialog-user-company/dialog-user-company.component';
+import { CaptchaComponent } from '@shared/components/captcha/captcha.component';
 
 @Component({
   selector: 'ui-auth',
   standalone: true,
   encapsulation: ViewEncapsulation.None,
-  imports: [MatButtonModule, MatSelectModule, ReactiveFormsModule, MatIconModule, MatFormFieldModule, MatInputModule],
+  imports: [
+    MatButtonModule,
+    MatSelectModule, 
+    ReactiveFormsModule, 
+    MatIconModule, 
+    MatFormFieldModule, 
+    MatInputModule,
+    CaptchaComponent],
   templateUrl: './auth.component.html',
   styleUrl: './auth.component.scss',
   providers: [AuthPresenter]
@@ -32,6 +40,7 @@ export class AuthComponent implements OnInit {
 
   authForm!: FormGroup;
   hide: boolean = true;
+  tokenRecatpcha = signal("");
 
   ngOnInit(): void {
     this.authForm = this._authPresenter.initForm();
@@ -54,4 +63,8 @@ export class AuthComponent implements OnInit {
 		    }
 		});
 	}
+
+  getTokenCaptcha(token: string): void {
+    this.tokenRecatpcha.set(token);
+  }
 }

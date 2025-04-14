@@ -17,7 +17,7 @@ export const routes: Routes = [
           data: listaMenuResolver
         }, */
         children: [
-          { path: 'dashboard', loadChildren: () => import('app/features/dashboard-container/dashboard-container.module') },
+          { path: 'dashboard-operacion', loadChildren: () => import('app/features/dashboard-container/dashboard-container.module') },
           { path: 'estructura-flujo', loadChildren: () => import('app/features/flow-structure-container/flow-structure-container.module') },
           { path: '', redirectTo: '/dashboard', pathMatch: 'full' }
         ]

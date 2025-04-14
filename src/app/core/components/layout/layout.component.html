@@ -131,18 +131,22 @@
       <mat-select 
         class="label-text-13"
         panelClass="custom-select-panel"
-        [(ngModel)]="currentCompanyId" 
+        [(ngModel)]="currentOperationId"
+        (ngModelChange)="changeCurrentOperationStorage()"
         name="food">
-        @for (company of companies; track company) {
-          <mat-option class="label-text-13" [value]="company.id">
-            {{company.brandName}}
+        @for (company of operations; track company) {
+          <mat-option class="label-text-13" [value]="company.codigoAsignable">
+            {{company.nombreAsignable}}
           </mat-option>
         }
       </mat-select>
     </mat-form-field>
-    <button class="pr-4" mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+    <button [matMenuTriggerFor]="menu" class="pr-4" mat-icon-button aria-label="Example icon button with a vertical three dot icon">
       <mat-icon>person</mat-icon>
     </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="logout()">Cerrar sesión</button>
+    </mat-menu>
   </div>
     <!-- <div class="title">
     </div> -->

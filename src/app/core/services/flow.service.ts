@@ -20,6 +20,7 @@ export class FlowService {
     private _companyId = Number(localStorage.getItem("currentCompany"));
 
     loadingTableFlow = signal(false);
+    currentTypeFlow = signal(0);
 
     private readonly _http = inject(HttpClient);
 

@@ -62,8 +62,12 @@ export class FlowStructureContainerComponent implements OnInit {
   }
 
   getFlowHeaders(flowTypeId: number): void {
+    this._spinnerService.show();
     this._flowService.loadingTableFlow.set(true);
-    this._flowService.getFlowHeaders(flowTypeId).pipe(finalize(()=>this._flowService.loadingTableFlow.set(false))).subscribe({
+    this._flowService.getFlowHeaders(flowTypeId).pipe(finalize(()=>{
+      this._flowService.loadingTableFlow.set(false);
+      this._spinnerService.hide();
+    })).subscribe({
       next: (response: IResponseModel<FlowHeaderGetEntity[]>) => {
         if(response.status.status) this.flowHeaders = this._flowHeaderGetAdapter.convertEntityToModelArray(response.data);
         console.log("this.flowHeaders: ",this.flowHeaders);

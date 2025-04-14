@@ -1,125 +1,200 @@
-import { Component } from '@angular/core';
-import { ChartConfiguration, ChartType } from 'chart.js';
+import { Component, computed, effect, EventEmitter, inject, input, Input, Output } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { NativeDateAdapter } from '@angular/material/core';
+import { MatDatepicker } from '@angular/material/datepicker';
+import { AccumulatedIncomed } from 'app/core/models/dashboard/accumulated-incomed';
+import { AccumulatedMonthlyReport } from 'app/core/models/dashboard/accumulated-monthly-report.';
+import { FlowTypeGet } from 'app/core/models/flow/flow-type-get';
+import { ChartConfiguration, ChartData, ChartOptions, ChartType, ChartEvent, ChartDataset } from 'chart.js';
+import { DateTime } from 'luxon';
+import { DashboardPresenter } from './dashboard.presenter';
+import { AccumulatedByType } from 'app/core/models/dashboard/accumulated-by-type';
+import { DashboardService } from 'app/core/services/dashboard.service';
+import { FlowHeaderGet } from 'app/core/models/flow/flow-header-get';
+
+// Configuración personalizada de formatos
+export const MY_DATE_FORMATS = {
+  parse: {
+    dateInput: 'MM/YYYY',
+  },
+  display: {
+    dateInput: 'MM/YYYY',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
+
+// Adaptador personalizado
+export class MonthYearDateAdapter extends NativeDateAdapter {
+  override parse(value: any): Date | null {
+    if (typeof value === 'string' && value.indexOf('/') > -1) {
+      const [month, year] = value.split('/');
+      return new Date(Number(year), Number(month) - 1, 1);
+    }
+    return super.parse(value);
+  }
+
+  override format(date: Date, displayFormat: any): string {
+    if (displayFormat === 'MM/YYYY') {
+      return `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+    }
+    return super.format(date, displayFormat);
+  }
+}
 
 @Component({
   selector: 'ui-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.scss'
+  styleUrl: './dashboard.component.scss',
+  providers: [DashboardPresenter]
 })
 export class DashboardComponent {
-  /* barra */
-  /* barChartOptions: ChartConfiguration['options'] = {
-    responsive: true,
-    plugins: {
-      legend: { display: true },
-      title: { display: true, text: 'Presupuesto vs Gasto' },
-    },
+  @Output() eventLoadInitDataDashboard: EventEmitter<{ structureId: number, dates: [Date,Date] }> = new EventEmitter<{ structureId: number, dates: [Date,Date] }>();
+  @Output() eventGetChartReport: EventEmitter<{ structureId: number, dates: [Date,Date], parentIdFlow: number, type: 'I' | 'E'}> = new EventEmitter<{ structureId: number, dates: [Date,Date], parentIdFlow: number, type: 'I' | 'E'}>();
+
+  flowHeaders = input<FlowHeaderGet[]>([]);
+  accumulated = input<AccumulatedIncomed[]>([]);
+  monthlyAccumulatedIncomeList = input<AccumulatedMonthlyReport[]>([]);
+  accumulatedIncomeDetailList = input<{
+    firstGroup: AccumulatedMonthlyReport[],
+    secondGroup: AccumulatedMonthlyReport[]
+  } | null>(null);
+  incomeReportList = input<AccumulatedByType[]>([]);
+  expenseReportList = input<AccumulatedByType[]>([]);
+  incomeReportChartList = input<AccumulatedMonthlyReport[]>([]);
+  expenseReportChartList = input<AccumulatedMonthlyReport[]>([]);
+
+  private readonly _dashboardService = inject(DashboardService);
+  private readonly _dashboardPresenter = inject(DashboardPresenter);
+
+  endDate = new FormControl(new Date());
+  startDate = new FormControl(new Date());
+  selectedDate: DateTime = DateTime.now();
+  currentHeaderFlow = 0;
+
+  monthlyProfitabilityChartData!: { 
+    chartData: ChartData<'bar' | 'line', number[], string>,
+    chartOptions: ChartOptions<'bar' | 'line'>
   };
 
-  barChartData = {
-    labels: ['Enero', 'Febrero', 'Marzo'],
-    datasets: [
-      { data: [10000, 15000, 12000], label: 'Presupuesto' },
-      { data: [8000, 16000, 11000], label: 'Gasto real' }
-    ],
-  }; */
-  /* lineal */
-  /* lineChartOptions: ChartConfiguration['options'] = {
-    responsive: true,
-    plugins: {
-      legend: { display: true },
-      title: { display: true, text: 'Evolución de Presupuesto vs Gasto' }
-    },
-    scales: {
-      x: {
-        title: { display: true, text: 'Mes' }
-      },
-      y: {
-        title: { display: true, text: 'Monto en Soles' },
-        beginAtZero: true
-      }
-    }
+  incomeReportChartData!: { 
+    chartData: ChartData<'bar' | 'line', number[], string>,
+    chartOptions: ChartOptions<'bar' | 'line'>
   };
 
-  lineChartData = {
-    labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-    datasets: [
-      {
-        data: [10000, 12000, 11000, 13000, 12500, 13500, 14000, 15000, 14500, 15500, 16000, 17000], // Presupuesto
-        label: 'Presupuesto',
-        borderColor: 'rgba(0, 123, 255, 1)',
-        backgroundColor: 'rgba(0, 123, 255, 0.3)',
-        fill: true
-      },
-      {
-        data: [9000, 11000, 10500, 12000, 13000, 14500, 13800, 14800, 14200, 15200, 15900, 16900], // Gasto Real
-        label: 'Gasto Real',
-        borderColor: 'rgba(255, 99, 132, 1)',
-        backgroundColor: 'rgba(255, 99, 132, 0.3)',
-        fill: true
-      }
-    ],
-  }; */
-  /* pie chart */
-  /* pieChartOptions: ChartConfiguration['options'] = {
-    responsive: true,
-    plugins: {
-      legend: { position: 'top' },
-      tooltip: { callbacks: { label: (tooltipItem) => `${tooltipItem.label}: S/. ${tooltipItem.raw}` } }
-    }
+  expenseReportChartData!: { 
+    chartData: ChartData<'bar' | 'line', number[], string>,
+    chartOptions: ChartOptions<'bar' | 'line'>
   };
+  
+  dataSourceI: any[] = [];
+  dataSourceE: any[] = [];
+  loadingChartE = computed(()=>this._dashboardService.loadingChartE());
+  loadingChartI = computed(()=>this._dashboardService.loadingChartI());
+  loadingAccumulatedIncome = computed(()=>this._dashboardService.loadingAccumulatedIncome());
+  loadingMonthlyAccumulatedIncome = computed(()=>this._dashboardService.loadingMonthlyAccumulatedIncome());
+  loadingMonthlyIncomeDetails = computed(()=>this._dashboardService.loadingMonthlyIncomeDetails());
+  loadingAccumulatedReportByTypeI = computed(()=>this._dashboardService.loadingAccumulatedReportByTypeI());
+  loadingAccumulatedReportByTypeE = computed(()=>this._dashboardService.loadingAccumulatedReportByTypeE());
 
-  pieChartData = {
-    labels: ['Presupuesto', 'Gasto Real', 'Ahorro'],
-    datasets: [{
-      data: [10000, 8000, 2000], // Valores de cada sección (presupuesto, gasto, ahorro)
-      backgroundColor: ['#36A2EB', '#FF6384', '#4BC0C0'], // Colores para cada sección
-      hoverBackgroundColor: ['#36A2EB', '#FF6384', '#4BC0C0']
-    }]
-  }; */
+  monthlySalesVsCostsChartData: any;
 
-  /* Stacked bar/line */
-  combinedChartType: ChartType = 'bar'; // el tipo principal puede ser 'bar' si hay barras
+  get formattedDate(): string {
+    return this.selectedDate.setLocale('es').toFormat('LLLL yyyy'); // Abril 2025
+  }
 
-  combinedChartData: ChartConfiguration<ChartType>['data'] = {
-    labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'],
-    datasets: [
-      {
-        type: 'line',
-        label: 'Presupuesto',
-        data: [10000, 12000, 11000, 13000, 9000, 14000],
-        borderColor: '#2196F3',
-        borderWidth: 2,
-        tension: 0.4,
-        fill: false,
-        yAxisID: 'y'
-      },
-      {
-        type: 'bar',
-        label: 'Gasto Real',
-        data: [9500, 13000, 10000, 15000, 8500, 16000],
-        backgroundColor: '#F44336',
-        yAxisID: 'y'
+  constructor() {
+    effect(() => {
+      if(this.flowHeaders()?.length > 0)  {
+        this.currentHeaderFlow = this.flowHeaders()[3].structureHeaderId;
+        this.eventLoadInitDataDashboard.emit({structureId: this.currentHeaderFlow, dates: [this.startDate.value!,this.endDate.value!]})
       }
-    ]
-  };
+    });
+    effect(() => {
+      this.monthlyProfitabilityChartData = this._dashboardPresenter.initMonthlyProfitabilityChart(this.monthlyAccumulatedIncomeList());
+    });
+    effect(() => {
+      this.monthlySalesVsCostsChartData = this._dashboardPresenter.initMonthlySalesVsCostsChart(this.accumulatedIncomeDetailList());
+      console.log("this.monthlySalesVsCostsChartData: ",this.monthlySalesVsCostsChartData);
+    });
+    effect(() => {
+      this.dataSourceI = this.incomeReportList();
+      console.log("this.incomeReportList(): ",this.incomeReportList());
+      if(this.incomeReportList()?.length > 0) this.showChartIncome(this.incomeReportList()[0],0)
+      this.dataSourceE = this.expenseReportList();
+      if(this.expenseReportList()?.length > 0) this.showChartExpense(this.expenseReportList()[0],0)
+    });
+    effect(() => {
+      this.incomeReportChartData = this._dashboardPresenter.initMonthlyIncomeChart(this.incomeReportChartList());
+    });
+    effect(() => {
+      this.expenseReportChartData = this._dashboardPresenter.initMonthlyIncomeChart(this.expenseReportChartList());
+    });
+  }
 
-  combinedChartOptions: ChartConfiguration<ChartType>['options'] = {
-    responsive: true,
-    plugins: {
-      legend: { position: 'top' },
-      tooltip: {
-        callbacks: {
-          label: (tooltipItem) => `S/. ${tooltipItem.raw}`
-        }
-      }
-    },
-    scales: {
-      x: {},
-      y: {
-        beginAtZero: true,
-        title: { display: true, text: 'Monto en soles' }
-      }
-    }
-  };
+  ngOnInit(): void {
+    console.log("this.incomeReportList();: ",this.incomeReportList());
+    //this.dataSource = this.incomeReportList();
+    const currentDate = new Date();
+    currentDate?.setMonth(currentDate.getMonth() - 6)
+    this.startDate.setValue(currentDate);
+  }
+
+  setMonthAndYear(normalizedMonthAndYear: Date, datepicker: MatDatepicker<Date>) {
+    // Creamos una nueva fecha con el primer día del mes seleccionado
+    const newValue = new Date(normalizedMonthAndYear.getFullYear(), normalizedMonthAndYear.getMonth(), 1);
+    this.endDate.setValue(newValue);
+    datepicker.close();
+  }
+
+  setMonthAndYear2(normalizedMonthAndYear: Date, datepicker: MatDatepicker<Date>) {
+    // Creamos una nueva fecha con el primer día del mes seleccionado
+    const newValue = new Date(normalizedMonthAndYear.getFullYear(), normalizedMonthAndYear.getMonth(), 1);
+    this.startDate.setValue(newValue);
+    datepicker.close();
+  }
+
+  getDataDashboard(): void {
+    this.eventLoadInitDataDashboard.emit({structureId: this.currentHeaderFlow, dates: [this.startDate.value!,this.endDate.value!]})
+  }
+
+  firstIndexTable = 0;
+  secondIndexTable = 0;
+  
+  displayedColumns: string[] = ['parentLevelName', 'executedAmount', 'budgetedAmount', 'difference', 'percentage'];
+  
+  showChartIncome(row: AccumulatedByType, index: number): void {
+    console.log("este es mi data: ",row);
+    this.firstIndexTable = index;
+    this.eventGetChartReport.emit({
+      structureId: this.currentHeaderFlow,
+      dates: [this.startDate.value!,this.endDate.value!],
+      parentIdFlow: row.parentFlowStructureId,
+      type: 'I'
+    });
+  }
+
+  showChartExpense(row: AccumulatedByType, index: number): void {
+    console.log("este es mi data: ",row);
+    this.eventGetChartReport.emit({
+      structureId: this.currentHeaderFlow,
+      dates: [this.startDate.value!,this.endDate.value!],
+      parentIdFlow: row.parentFlowStructureId,
+      type: 'E'
+    });
+    this.secondIndexTable = index;
+  }
+  
+  getAbsolutePercentage(value: number): number {
+    const percent = Math.abs(value * 100);
+    return percent > 100 ? 100 : percent;
+  }
+
+  getSafePercentage(value: number): number {
+    // Nos aseguramos que la barra no se pase del 100%
+    const absValue = Math.abs(value);
+    return absValue > 100 ? 100 : absValue;
+  }
+  
 }

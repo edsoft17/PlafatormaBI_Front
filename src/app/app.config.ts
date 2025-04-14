@@ -1,4 +1,4 @@
-import { ApplicationConfig, importProvidersFrom } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom, LOCALE_ID } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -10,12 +10,14 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { provideToastr } from 'ngx-toastr';
 import { MatPaginatorIntl, MAT_PAGINATOR_DEFAULT_OPTIONS, MatPaginatorDefaultOptions } from '@angular/material/paginator';
 import { getSpanishPaginatorIntl } from '@shared/utils/paginator';
+import { RECAPTCHA_V3_SITE_KEY, RecaptchaV3Module } from 'ng-recaptcha';
 
 export const appConfig: ApplicationConfig = {
   providers: [provideRouter(routes), 
     provideHttpClient(withInterceptors([permissionsInterceptor])), 
     provideAnimationsAsync(),
     importProvidersFrom(MatProgressSpinnerModule),
+    importProvidersFrom(RecaptchaV3Module),
     provideIP(),
     provideToastr(),
     {
@@ -29,6 +31,8 @@ export const appConfig: ApplicationConfig = {
         pageSize: 10,
         pageSizeOptions: [5, 10, 25, 100],
         showFirstLastButtons: true
-      } as MatPaginatorDefaultOptions
-    }]
+      } as MatPaginatorDefaultOptions,
+      
+    },
+    { provide: LOCALE_ID, useValue: 'es-PE' }]
 };

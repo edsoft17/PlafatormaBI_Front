@@ -51,7 +51,7 @@ export class AuthService {
       return new Observable();
     } */
 
-    return this._http.post<any>(`${environment.baseUrlBI}/Autenticacion/refresh-token`, { refreshToken, accessToken });/* .pipe(
+    return this._http.post<any>(`${environment.baseUrlBI}/api/Autenticacion/refresh-token`, { refreshToken, accessToken });/* .pipe(
       switchMap((response: any) => {
         if (response && response.accessToken) {
           return response;  // Devuelve el nuevo token

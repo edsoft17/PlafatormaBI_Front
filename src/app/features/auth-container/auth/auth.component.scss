@@ -23,8 +23,9 @@
 .login__form {
     display: flex;
     flex-direction: column;
-    width: 70%;
+    width: 90%;
     justify-content: center;
+    align-items: center;
     margin-left: auto;
     margin-right: auto;
 }
@@ -39,7 +40,18 @@
 }
 
 .mdc-button.login__button {
+    margin-top: 20px;
+    width: 100%;
+    padding: 10px;
     background-color: $color-blue;
+    border-radius: 30px;
+}
+
+.mdc-button.login__button:disabled {
+    margin-top: 20px;
+    width: 100%;
+    padding: 10px;
+    background-color: #a0b0cc;
     border-radius: 30px;
 }
 
@@ -51,3 +63,8 @@
     display: flex;
     justify-content: center;
 }
+
+.recaptcha-wrapper {
+    transform: scale(1); /* escala hacia abajo */
+    transform-origin: 0 0; /* punto de origen arriba a la izquierda */
+  }
