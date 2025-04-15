@@ -27,6 +27,7 @@ export class DashboardService {
     loadingAccumulatedReportByTypeE = signal(false);
     loadingChartI = signal(false);
     loadingChartE = signal(false);
+    loadingChartDetails = signal(false);
 
     private readonly _http = inject(HttpClient);
 
@@ -113,5 +114,29 @@ export class DashboardService {
                                         .append("tipo",type)
 
         return this._http.get<IResponseModel<AccumulatedMonthlyReportEntity[]>>(url, { params: httParams });
+    }
+    
+    getChildTypeReportDetail(flowHeaderId: number, startDate: Date, endDate: Date, type: 'I' | 'E', parentIdFlow: number): Observable<IResponseModel<any[]>> {
+        const url = `${environment.baseUrlBI}/api/Dashboard/ObtenerReporteTipoHijoDetalle`;
+        const operationCode = localStorage.getItem("currentOperation");
+
+        const httParams = new HttpParams().append("idUsuario",this._user.id)
+                                        .append("idEmpresa",this._companyId)
+                                        .append("IdEstructuraFlujo_Cabecera",flowHeaderId)
+                                        .append("FechaIni",this.formatDate(startDate))
+                                        .append("FechaFin",this.formatDate(endDate))
+                                        .append("code_operacion",operationCode!)
+                                        .append("IdHijo",parentIdFlow)
+                                        .append("tipo",type)
+
+        return this._http.get<IResponseModel<any[]>>(url, { params: httParams });
+    }
+
+    formatDate(date: Date): string {
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+      
+        return `${day}/${month}/${year}`;
     }
 }

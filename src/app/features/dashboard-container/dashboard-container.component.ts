@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit, ViewChild } from '@angular/core';
 import { DashboardContainerPresenter } from './dashboard-container.presenter';
 import { FlowService } from 'app/core/services/flow.service';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -21,6 +21,8 @@ import { AccumulatedByTypeAdapter } from 'app/core/adapters/dashboard/accumulate
 import { AccumulatedByType } from 'app/core/models/dashboard/accumulated-by-type';
 import { FlowHeaderGetEntity } from 'app/core/entities/flow/flow-header-get.entity';
 import { FlowHeaderGet } from 'app/core/models/flow/flow-header-get';
+import { ParamToReport } from './dashboard/dashboard.models';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 @Component({
   selector: 'app-dashboard-container',
@@ -36,6 +38,8 @@ import { FlowHeaderGet } from 'app/core/models/flow/flow-header-get';
       [expenseReportChartList]="expenseReportChartList"
       (eventLoadInitDataDashboard)="loadInitDataDashboard($event)"
       (eventGetChartReport)="getAccumulatedDetailsReportByType($event)"
+      (eventGetChartDetail)="getChartDetail($event)"
+
     >
     </ui-dashboard>
   `,
@@ -68,6 +72,8 @@ export class DashboardContainerComponent implements OnInit {
   incomeReportChartList: AccumulatedMonthlyReport[] = [];
   expenseReportChartList: AccumulatedMonthlyReport[] = [];
   flowHeaders: FlowHeaderGet[] = [];
+
+  @ViewChild(DashboardComponent) dashboardComponent!: DashboardComponent;
 
   ngOnInit(): void {
     this._dashboardContainerPresenter.getDataFromRoute();
@@ -141,7 +147,7 @@ export class DashboardContainerComponent implements OnInit {
     });
   }
 
-  getAccumulatedDetailsReportByType(param: { structureId: number, dates: [Date,Date], parentIdFlow: number, type: 'I' | 'E'}): void {
+  getAccumulatedDetailsReportByType(param: ParamToReport): void {
     console.log("getAccumulatedDetailsReportByType: ",param);
     if(param.type === 'I') {
       console.log("aca estoy I");
@@ -178,6 +184,17 @@ export class DashboardContainerComponent implements OnInit {
         if(response.status.status) this.flowHeaders = this._flowHeaderGetAdapter.convertEntityToModelArray(response.data);
         console.log("this.flowHeaders: ",this.flowHeaders);
       }
+    });
+  }
+
+  getChartDetail(param: ParamToReport) {
+    this._spinnerService.show();
+    this._dashboardService.getChildTypeReportDetail(param.structureId,param.dates[0],param.dates[1],param.type,param.parentIdFlow).pipe(
+      finalize(()=>this._spinnerService.hide())
+    ).subscribe({
+      next: (data => {
+        this.dashboardComponent.openDialogDetails(data.data, param.nameChild!, param.dates);
+      })
     });
   }
 }

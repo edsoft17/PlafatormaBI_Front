@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgClass } from '@angular/common';
 
 import { DashboardContainerRoutingModule } from './dashboard-container-routing.module';
 import { DashboardContainerComponent } from './dashboard-container.component';
@@ -16,6 +16,7 @@ import { MatTableModule } from '@angular/material/table';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { AbsPipe } from 'app/core/pipe/abs.pipe';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,9 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     ReactiveFormsModule,
     FormsModule,
     MatProgressSpinnerModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    NgClass,
+    AbsPipe
   ],
   providers: [
     //provideNativeDateAdapter(),
