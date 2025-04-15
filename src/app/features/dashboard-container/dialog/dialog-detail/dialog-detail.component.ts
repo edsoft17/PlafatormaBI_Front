@@ -3,6 +3,7 @@ import { Component, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { BiContDialogComponent } from 'app/components/bi-cont-dialog/bi-cont-dialog.component';
+import { CurrencyPipe } from '@angular/common';
 
 @Component({
   selector: 'app-dialog-detail',
@@ -10,11 +11,12 @@ import { BiContDialogComponent } from 'app/components/bi-cont-dialog/bi-cont-dia
   imports: [BiContDialogComponent,MatTableModule,JsonPipe],
   templateUrl: './dialog-detail.component.html',
   styleUrl: './dialog-detail.component.scss',
-  providers: [DatePipe]
+  providers: [DatePipe,CurrencyPipe]
 })
 export class DialogDetailComponent {
   readonly data: { primerGrupo: any[], segundoGrupo: any[], dates: [Date,Date], name: string } = inject(MAT_DIALOG_DATA);
   readonly dialogRef = inject(MatDialogRef<DialogDetailComponent>);
+  private currencyPipe = inject(CurrencyPipe);
   private datePipe = inject(DatePipe);
 
   dataSource: any[] = [];
@@ -28,14 +30,16 @@ export class DialogDetailComponent {
   }
 
   formatCellValue(value: any, column: string): string {
-    // La primera columna es texto, las demás son números
     if (column === 'Area') {
       return value || '';
     }
   
-    // Para columnas numéricas, mostrar 2 decimales y 0 si es null/undefined
     const num = Number(value);
-    return isNaN(num) ? '0.00' : num.toFixed(2);
+    if (isNaN(num)) {
+      return this.currencyPipe.transform(0, 'PEN', 'symbol', '1.2-2', 'es-PE') || 'S/ 0.00';
+    }
+  
+    return this.currencyPipe.transform(num, 'PEN', 'symbol', '1.2-2', 'es-PE') || '';
   }
   
   getCostCenterTitle(): string {
