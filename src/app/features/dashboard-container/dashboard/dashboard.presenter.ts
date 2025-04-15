@@ -99,33 +99,37 @@ export class DashboardPresenter {
                 datasets: [
                     { 
                         data: [...data?.firstGroup.map(value => value.executedAmount) ?? []], 
-                        label: 'E. Real',
-                        borderColor: '#da8a1d',
-                        backgroundColor: "#da8a1d",
-                        hoverBackgroundColor: "#da8a1d"
-                    },
-                    { 
-                        data: [...data?.secondGroup.map(value => value.executedAmount) ?? []], 
                         label: 'I. Real',
                         borderColor: '#097c2c',
                         backgroundColor: "#097c2c",
                         hoverBackgroundColor: "#097c2c"
                     },
+                    { 
+                        data: [...data?.secondGroup.map(value => value.executedAmount) ?? []], 
+                        label: 'E. Real',
+                        borderColor: '#da8a1d',
+                        backgroundColor: "#da8a1d",
+                        hoverBackgroundColor: "#da8a1d"
+                    },
                     {
-                        label: 'E. Ppto',
+                        label: 'I. Ppto',
                         type: 'line',
                         data: [...data?.firstGroup.map( value => value.budgetAmount) ?? []],
-                        borderColor: '#ffc87c',
-                        backgroundColor: '#ffc87c',
+                        borderColor: '#85bc96',
+                        backgroundColor: '#85bc96',
+                        pointBorderColor: '#85bc96',
+                        pointBackgroundColor: '#85bc96',
                         borderWidth: 2,
                         yAxisID: 'y',
                     } as ChartDataset<'line', number[]>,
                     {
-                        label: 'I. Ppto',
+                        label: 'E. Ppto',
                         type: 'line',
                         data: [...data?.secondGroup.map( value => value.budgetAmount) ?? []],
-                        borderColor: '#85bc96',
-                        backgroundColor: '#85bc96',
+                        borderColor: '#ffc87c',
+                        backgroundColor: '#ffc87c',
+                        pointBorderColor: '#ffc87c',
+                        pointBackgroundColor: '#ffc87c',
                         borderWidth: 2,
                         yAxisID: 'y',
                     } as ChartDataset<'line', number[]>
