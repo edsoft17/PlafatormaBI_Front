@@ -198,7 +198,7 @@ export class DashboardComponent {
 
   getSafePercentage(value: number): number {
     // Nos aseguramos que la barra no se pase del 100%
-    const absValue = Math.abs(value);
+    const absValue = Math.abs(value * 100);
     return absValue > 100 ? 100 : absValue;
   }
   

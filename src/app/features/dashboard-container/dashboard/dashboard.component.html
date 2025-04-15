@@ -139,7 +139,7 @@
               <mat-header-cell mat-header-cell *matHeaderCellDef> Real </mat-header-cell>
               <mat-cell mat-cell *matCellDef="let element"> 
                 <span [ngClass]="{'text-red-800': element.executedAmount < 0}">
-                  {{element.executedAmount | abs | currency:'PEN':'symbol':'1.2-2':'es-PE'}}
+                  {{element.executedAmount * 100 | abs | currency:'PEN':'symbol':'1.2-2':'es-PE'}}
                 </span>
               </mat-cell>
             </ng-container>
@@ -155,13 +155,14 @@
               <mat-header-cell mat-header-cell *matHeaderCellDef> % del Ppto </mat-header-cell>
               <mat-cell mat-cell *matCellDef="let element"> 
                 <div class="w-40">
+                  <!--  element.percentage >= 0 ? 'primary' : 'warn'" -->
                   <mat-progress-bar
                     [value]="getAbsolutePercentage(element.percentage)"
-                    [color]="element.percentage >= 0 ? 'primary' : 'warn'"
+                    [color]="'primary'"
                     mode="determinate"
                   ></mat-progress-bar>
                   <span class="text-xs mt-1 block text-center">
-                    {{ element.percentage | abs | percent:'1.2-2':'es-PE' }}
+                    {{ element.percentage | abs | percent }}
                   </span>
                 </div>
               </mat-cell>
@@ -246,13 +247,14 @@
               <mat-header-cell mat-header-cell *matHeaderCellDef> % del Ppto </mat-header-cell>
               <mat-cell mat-cell *matCellDef="let element"> 
                 <div class="w-40">
+                  <!--  element.percentage >= 0 ? 'primary' : 'warn'" -->
                   <mat-progress-bar
                     [value]="getSafePercentage(element.percentage)"
-                    [color]="element.percentage >= 0 ? 'primary' : 'warn'"
+                    [color]="'primary'"
                     mode="determinate"
                   ></mat-progress-bar>
                   <span class="text-xs mt-1 block text-center">
-                    <span>{{ element.percentage | abs | number:'1.2-2' }}%</span>
+                    <span>{{ element.percentage | abs | percent }}</span>
                   </span>
                 </div>
               </mat-cell>
