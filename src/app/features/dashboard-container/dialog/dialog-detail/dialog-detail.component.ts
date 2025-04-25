@@ -1,20 +1,21 @@
-import { DatePipe, JsonPipe } from '@angular/common';
+import { CommonModule, DatePipe, JsonPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { BiContDialogComponent } from 'app/components/bi-cont-dialog/bi-cont-dialog.component';
 import { CurrencyPipe } from '@angular/common';
+import { AbsPipe } from 'app/core/pipe/abs.pipe';
 
 @Component({
   selector: 'app-dialog-detail',
   standalone: true,
-  imports: [BiContDialogComponent,MatTableModule,JsonPipe],
+  imports: [BiContDialogComponent,MatTableModule,JsonPipe,AbsPipe,CommonModule],
   templateUrl: './dialog-detail.component.html',
   styleUrl: './dialog-detail.component.scss',
   providers: [DatePipe,CurrencyPipe]
 })
 export class DialogDetailComponent {
-  readonly data: { primerGrupo: any[], segundoGrupo: any[], dates: [Date,Date], name: string } = inject(MAT_DIALOG_DATA);
+  readonly data: { primerGrupo: any[], segundoGrupo: any[], dates: [Date,Date], executedAmount: number, budgetedAmount: number, name: string } = inject(MAT_DIALOG_DATA);
   readonly dialogRef = inject(MatDialogRef<DialogDetailComponent>);
   private currencyPipe = inject(CurrencyPipe);
   private datePipe = inject(DatePipe);
@@ -23,7 +24,6 @@ export class DialogDetailComponent {
   displayedColumns = ['Area']; // siempre incluyes las fijas primero
 
   ngOnInit(): void {
-    console.log("data modal: ",this.data);
     this.dataSource = this.data.primerGrupo;
     const dynamicKeys = Object.keys(this.data.primerGrupo[0]).filter(key => key !== 'Area');
     this.displayedColumns = [...this.displayedColumns, ...dynamicKeys];

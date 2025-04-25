@@ -6,6 +6,5 @@ export class DashboardContainerPresenter {
     
     getDataFromRoute(): any {
         const datos = this._routeActive.snapshot.data['listaMenuResolver'];
-        console.log("los datos son ;: ",datos);
     }
 }

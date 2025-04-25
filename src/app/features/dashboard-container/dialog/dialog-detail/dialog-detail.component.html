@@ -1,4 +1,16 @@
 <bi-cont-dialog [title]="getCostCenterTitle()">
+    <div class="flex justify-start space-x-4 pb-4">
+        <div class="card-dashboard">
+            <p class="dashboard-cards__title">Real: </p>
+            {{data.budgetedAmount | abs | currency:'PEN':'symbol':'1.2-2':'es-PE'}}
+        </div>
+        <div class="card-dashboard">
+            <p class="dashboard-cards__title">Ppto: </p>
+            <span>{{data.executedAmount | abs | currency:'PEN':'symbol':'1.2-2':'es-PE'}}</span>
+        </div>
+        <!-- <p>Real <span>{{data.budgetedAmount | abs | currency:'PEN':'symbol':'1.2-2':'es-PE'}}</span></p>
+        <p>Ppto. <span>{{data.executedAmount | abs | currency:'PEN':'symbol':'1.2-2':'es-PE'}}</span></p> -->
+    </div>
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
         @for (displayed of displayedColumns; track $index) {
             <ng-container [matColumnDef]="displayed">

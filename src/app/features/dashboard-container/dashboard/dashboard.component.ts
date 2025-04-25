@@ -1,4 +1,4 @@
-import { Component, computed, effect, EventEmitter, inject, input, Input, Output } from '@angular/core';
+import { Component, computed, effect, EventEmitter, inject, input, Input, Output, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { NativeDateAdapter } from '@angular/material/core';
 import { MatDatepicker } from '@angular/material/datepicker';
@@ -15,6 +15,7 @@ import { ParamToReport } from './dashboard.models';
 import { DialogDetailComponent } from '../dialog/dialog-detail/dialog-detail.component';
 import { MatDialog } from '@angular/material/dialog';
 import { FlowDataAccount } from 'app/core/models/flow/flow-data-account';
+import { EnterpriseReport } from 'app/core/models/dashboard/enterprise-report';
 
 // Configuración personalizada de formatos
 export const MY_DATE_FORMATS = {
@@ -49,6 +50,7 @@ export class MonthYearDateAdapter extends NativeDateAdapter {
 
 @Component({
   selector: 'ui-dashboard',
+  //encapsulation: ViewEncapsulation.None,
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
   providers: [DashboardPresenter]
@@ -69,6 +71,8 @@ export class DashboardComponent {
   expenseReportList = input<AccumulatedByType[]>([]);
   incomeReportChartList = input<AccumulatedMonthlyReport[]>([]);
   expenseReportChartList = input<AccumulatedMonthlyReport[]>([]);
+  enterpriseReport = input<EnterpriseReport>();
+  progressValue = 80;
 
   private readonly _dashboardService = inject(DashboardService);
   private readonly _dashboardPresenter = inject(DashboardPresenter);
@@ -101,6 +105,7 @@ export class DashboardComponent {
   loadingMonthlyIncomeDetails = computed(()=>this._dashboardService.loadingMonthlyIncomeDetails());
   loadingAccumulatedReportByTypeI = computed(()=>this._dashboardService.loadingAccumulatedReportByTypeI());
   loadingAccumulatedReportByTypeE = computed(()=>this._dashboardService.loadingAccumulatedReportByTypeE());
+  loadingEnterpriseReport = computed(()=>this._dashboardService.loadingEnterpriseReport());
 
   monthlySalesVsCostsChartData: any;
 
@@ -120,11 +125,9 @@ export class DashboardComponent {
     });
     effect(() => {
       this.monthlySalesVsCostsChartData = this._dashboardPresenter.initMonthlySalesVsCostsChart(this.accumulatedIncomeDetailList());
-      console.log("this.monthlySalesVsCostsChartData: ",this.monthlySalesVsCostsChartData);
     });
     effect(() => {
       this.dataSourceI = this.incomeReportList();
-      console.log("this.incomeReportList(): ",this.incomeReportList());
       if(this.incomeReportList()?.length > 0) this.showChartIncome(this.incomeReportList()[0],0)
       this.dataSourceE = this.expenseReportList();
       if(this.expenseReportList()?.length > 0) this.showChartExpense(null,this.expenseReportList()[0],0)
@@ -141,9 +144,6 @@ export class DashboardComponent {
     const currentDate = new Date();
     currentDate?.setMonth(currentDate.getMonth() - 6)
     this.startDate.setValue(currentDate);
-    /* this._dashboardPresenter.getDataChartDetailE$.subscribe({
-      next: (data) => this.eventGetChartDetail.emit(data)
-    }); */
   }
 
   setMonthAndYear(normalizedMonthAndYear: Date, datepicker: MatDatepicker<Date>) {
@@ -170,7 +170,6 @@ export class DashboardComponent {
   displayedColumns: string[] = ['parentLevelName', 'executedAmount', 'budgetedAmount', 'difference', 'percentage', 'acciones'];
   
   showChartIncome(row: AccumulatedByType, index: number): void {
-    console.log("este es mi data: ",row);
     this.firstIndexTable = index;
     this.eventGetChartReport.emit({
       structureId: this.currentHeaderFlow,
@@ -181,7 +180,6 @@ export class DashboardComponent {
   }
 
   showChartExpense(event: any, row: AccumulatedByType, index: number): void {
-    console.log("este es mi data: ",event);
     this.eventGetChartReport.emit({
       structureId: this.currentHeaderFlow,
       dates: [this.startDate.value!,this.endDate.value!],
@@ -208,13 +206,15 @@ export class DashboardComponent {
       parentIdFlow: param.parentFlowStructureId,
       structureId: this.currentHeaderFlow,
       type: type,
-      nameChild: param.parentLevelName
+      nameChild: param.parentLevelName,
+      budgetedAmount: param.budgetedAmount,
+      executedAmount: param.executedAmount
     });
   }
 
-  openDialogDetails(data: any, name: string, dates: [Date,Date]): void {
+  openDialogDetails(data: any, name: string, dates: [Date,Date], executedAmount: number, budgetedAmount: number): void {
     const respDialogo = this.dialog.open(DialogDetailComponent, {
-      data: {...data, name: name, dates: dates},
+      data: {...data, name: name, dates: dates, executedAmount: executedAmount, budgetedAmount: budgetedAmount},
       disableClose: true,
       //width: '800px',  // 100% del ancho de la ventana
       maxWidth: 'none', // Evita restricciones de Angular Material

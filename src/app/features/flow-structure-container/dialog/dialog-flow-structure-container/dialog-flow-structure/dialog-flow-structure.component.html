@@ -60,37 +60,6 @@
                     <button mat-icon-button [matMenuTriggerFor]="menu" (click)="menuContextNode = node" aria-label="Example icon-button with a menu">
                       <mat-icon>more_vert</mat-icon>
                     </button>
-                    <!-- @if (node.levelId !== 3) {
-                      <button
-                        matTooltip="Agregar estructura"
-                        mat-icon-button (click)="openDialogStructure(createDataDialog(false,node))">
-                        <mat-icon class="mat-icon-rtl-mirror">
-                            add
-                        </mat-icon>
-                      </button>
-                    } @else if (node.levelId === 3) {
-                      <button
-                        matTooltip="Asociar cuentas contables"
-                        mat-icon-button (click)="getLedgerAccounts(node)">
-                        <mat-icon class="mat-icon-rtl-mirror">
-                          link
-                        </mat-icon>
-                      </button>
-                    }
-                    <button
-                      matTooltip="Editar estructura"
-                      mat-icon-button (click)="openDialogStructure(createDataDialog(true,node))">
-                      <mat-icon class="mat-icon-rtl-mirror">
-                          edit
-                      </mat-icon>
-                    </button>
-                    <button
-                      matTooltip="Eliminar estructura"
-                      mat-icon-button (click)="deleteNode(node)">
-                      <mat-icon class="mat-icon-rtl-mirror">
-                          delete
-                      </mat-icon>
-                    </button> -->
                   </div>
               </mat-tree-node>
               <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
@@ -101,40 +70,15 @@
                         {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
                       </mat-icon>
                     </button>
-                    <p class="pl-2 pr-2" style="margin-bottom: 0px !important;"><!-- label-text-12 -->
+                    <p class="pl-2 pr-2" style="margin-bottom: 0px !important;">
                       {{node.levelName}}
                     </p>
                     <div class="ml-2">
                       <button mat-icon-button [matMenuTriggerFor]="menu" (click)="menuContextNode = node" aria-label="Example icon-button with a menu">
                         <mat-icon>more_vert</mat-icon>
                       </button>
-                      <!-- <button
-                        size="small"
-                        class="small-icon-button"
-                        matTooltip="Agregar estructura"
-                        mat-icon-button (click)="openDialogStructure(createDataDialog(false,node))">
-                        <mat-icon>
-                            add
-                        </mat-icon>
-                      </button>
-                      <button
-                        matTooltip="Editar estructura"
-                        mat-icon-button (click)="openDialogStructure(createDataDialog(true,node))">
-                        <mat-icon class="mat-icon-rtl-mirror">
-                            edit
-                        </mat-icon>
-                      </button>
-                      <button
-                        matTooltip="Eliminar estructura"
-                        mat-icon-button (click)="deleteNode(node)">
-                        <mat-icon class="mat-icon-rtl-mirror">
-                            delete
-                        </mat-icon>
-                      </button> -->
                     </div>
                   </div>
-                  <!-- There is inline padding applied to this div using styles.
-                      This padding value depends on the mat-icon-button width.  -->
                   <div [class.example-tree-invisible]="!treeControl.isExpanded(node)"
                       role="group">
                     <ng-container matTreeNodeOutlet></ng-container>
@@ -163,7 +107,6 @@
               </div>
             </div>
             @if(showAssociatedAccount) {
-              <!-- <mat-divider [vertical]="true" class="px-2"></mat-divider> -->
               <div class="structure__associated-accounts">
                 <div class="flex flex-col">
                   <h3 class="label-text-13 structure__title">Cuentas contables asociadas</h3>
@@ -190,8 +133,6 @@
               </div>
             }
           }
-          <!-- <div class="flex h-8">
-          </div> -->
         }
       }
     </div>

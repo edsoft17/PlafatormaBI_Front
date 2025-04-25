@@ -11,6 +11,8 @@ import { User } from '../models/user.model';
 import { AccumulatedMonthlyReport } from '../models/dashboard/accumulated-monthly-report.';
 import { AccumulatedByTypeEntity } from '../entities/dashboard/accumulated-by-type.entity';
 import { AccumulatedMonthlyReportEntity } from '../entities/dashboard/accumulated-monthly-report.entity';
+import { EnterpriseReport } from '../models/dashboard/enterprise-report';
+import { EnterpriseReportEntity } from '../entities/dashboard/enterprise-report.entity';
 
 @Injectable({
     providedIn: 'root',
@@ -28,6 +30,7 @@ export class DashboardService {
     loadingChartI = signal(false);
     loadingChartE = signal(false);
     loadingChartDetails = signal(false);
+    loadingEnterpriseReport = signal(false);
 
     private readonly _http = inject(HttpClient);
 
@@ -130,6 +133,13 @@ export class DashboardService {
                                         .append("tipo",type)
 
         return this._http.get<IResponseModel<any[]>>(url, { params: httParams });
+    }
+
+    getReportEnterprise(): Observable<IResponseModel<EnterpriseReportEntity>> {
+        const operationCode = localStorage.getItem("currentOperation");
+        const url = `${environment.baseUrlBI}/api/Dashboard/ObtenerReporteEmpresa/${this._user.id}/${this._companyId}/${operationCode}`;
+        
+        return this._http.get<IResponseModel<EnterpriseReportEntity>>(url);
     }
 
     formatDate(date: Date): string {

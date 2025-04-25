@@ -23,6 +23,9 @@ import { FlowHeaderGetEntity } from 'app/core/entities/flow/flow-header-get.enti
 import { FlowHeaderGet } from 'app/core/models/flow/flow-header-get';
 import { ParamToReport } from './dashboard/dashboard.models';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { EnterpriseReport } from 'app/core/models/dashboard/enterprise-report';
+import { EnterpriseReportEntity } from 'app/core/entities/dashboard/enterprise-report.entity';
+import { EnterpriseReportAdapter } from 'app/core/adapters/dashboard/enterprise-report.adapter';
 
 @Component({
   selector: 'app-dashboard-container',
@@ -36,6 +39,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
       [expenseReportList]="expenseReportList"
       [incomeReportChartList]="incomeReportChartList"
       [expenseReportChartList]="expenseReportChartList"
+      [enterpriseReport]="enterpriseReport"
       (eventLoadInitDataDashboard)="loadInitDataDashboard($event)"
       (eventGetChartReport)="getAccumulatedDetailsReportByType($event)"
       (eventGetChartDetail)="getChartDetail($event)"
@@ -43,7 +47,15 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     >
     </ui-dashboard>
   `,
-  providers: [DashboardContainerPresenter,FlowTypeGetAdapter,AccumulatedMonthlyReportAdapter,AccumulatedIncomedGetAdapter,AccumulatedByTypeAdapter,FlowHeaderGetAdapter]
+  providers: [
+    DashboardContainerPresenter,
+    FlowTypeGetAdapter,
+    AccumulatedMonthlyReportAdapter,
+    AccumulatedIncomedGetAdapter,
+    AccumulatedByTypeAdapter,
+    FlowHeaderGetAdapter,
+    EnterpriseReportAdapter
+  ]
 })
 export class DashboardContainerComponent implements OnInit {
 
@@ -59,6 +71,7 @@ export class DashboardContainerComponent implements OnInit {
   private readonly _accumulatedMonthlyReportAdapter = inject(AccumulatedMonthlyReportAdapter);
   private readonly _accumulatedIncomedGetAdapter = inject(AccumulatedIncomedGetAdapter);
   private readonly _accumulatedByTypeAdapter = inject(AccumulatedByTypeAdapter);
+  private readonly _enterpriseReportAdapter = inject(EnterpriseReportAdapter);
 
   flowTypes: FlowTypeGet[] = [];
   accumulated: AccumulatedIncomed[] = []; 
@@ -72,6 +85,7 @@ export class DashboardContainerComponent implements OnInit {
   incomeReportChartList: AccumulatedMonthlyReport[] = [];
   expenseReportChartList: AccumulatedMonthlyReport[] = [];
   flowHeaders: FlowHeaderGet[] = [];
+  enterpriseReport!: EnterpriseReport;
 
   @ViewChild(DashboardComponent) dashboardComponent!: DashboardComponent;
 
@@ -79,6 +93,17 @@ export class DashboardContainerComponent implements OnInit {
     this._dashboardContainerPresenter.getDataFromRoute();
     this.getFlowTypes();
     this.getFlowHeaders();
+    this.getReportEnterprise();
+  }
+
+  getReportEnterprise(): void {
+    this._dashboardService.loadingEnterpriseReport.set(true);
+    this._dashboardService.getReportEnterprise().pipe(finalize(()=>this._dashboardService.loadingEnterpriseReport.set(false))).subscribe({
+      next: (data: IResponseModel<EnterpriseReportEntity>) => {
+        if(data.status.status === 200) this.enterpriseReport = this._enterpriseReportAdapter.convertEntityToModel(data.data);
+        console.log("this.enterpriseReport: ",this.enterpriseReport);
+      }
+    });
   }
 
   getFlowTypes(): void {
@@ -188,12 +213,19 @@ export class DashboardContainerComponent implements OnInit {
   }
 
   getChartDetail(param: ParamToReport) {
+    console.log("param: ",param);
     this._spinnerService.show();
     this._dashboardService.getChildTypeReportDetail(param.structureId,param.dates[0],param.dates[1],param.type,param.parentIdFlow).pipe(
       finalize(()=>this._spinnerService.hide())
     ).subscribe({
       next: (data => {
-        this.dashboardComponent.openDialogDetails(data.data, param.nameChild!, param.dates);
+        this.dashboardComponent.openDialogDetails(
+          data.data, 
+          param.nameChild!, 
+          param.dates,
+          param.executedAmount!,
+          param.budgetedAmount!
+        );
       })
     });
   }

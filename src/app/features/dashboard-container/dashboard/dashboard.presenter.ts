@@ -238,11 +238,8 @@ export class DashboardPresenter {
             const value = chart.data.datasets[datasetIndex].data[index];
   
             // 👉 Aquí ejecutas el método que quieras
-            console.log('Clic en:', { label, value });
   
-            console.log("aca estoy : ,",label,value);
             this.getDataChartDetailE.next({ date: label, type: 'E'});
-            console.log("fecha : ",this.convertToDayMonthYearFormat(label));
           }
         }
       }
@@ -323,11 +320,8 @@ export class DashboardPresenter {
             const value = chart.data.datasets[datasetIndex].data[index];
   
             // 👉 Aquí ejecutas el método que quieras
-            console.log('Clic en:', { label, value });
   
-            console.log("aca estoy : ,",label,value);
             this.getDataChartDetailE.next({ date: label, type: 'E'});
-            console.log("fecha : ",this.convertToDayMonthYearFormat(label));
           }
         }
       }

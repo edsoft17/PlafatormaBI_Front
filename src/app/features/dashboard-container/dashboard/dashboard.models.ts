@@ -4,4 +4,6 @@ export interface ParamToReport {
     parentIdFlow: number;
     type: 'I' | 'E';
     nameChild?: string;
+    executedAmount?: number;
+    budgetedAmount?: number;
 }

@@ -17,11 +17,15 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { AbsPipe } from 'app/core/pipe/abs.pipe';
+import { DialogDetailComponent } from './dialog/dialog-detail/dialog-detail.component';
+import { BiContDialogComponent } from 'app/components/bi-cont-dialog/bi-cont-dialog.component';
+import { MillionsPipe } from 'app/core/pipe/millions.pipe';
 
 @NgModule({
   declarations: [
     DashboardContainerComponent,
-    DashboardComponent
+    DashboardComponent//,
+    //DialogDetailComponent
   ],
   imports: [
     CommonModule,
@@ -39,8 +43,10 @@ import { AbsPipe } from 'app/core/pipe/abs.pipe';
     FormsModule,
     MatProgressSpinnerModule,
     MatProgressBarModule,
+    BiContDialogComponent,
     NgClass,
-    AbsPipe
+    AbsPipe,
+    MillionsPipe
   ],
   providers: [
     //provideNativeDateAdapter(),

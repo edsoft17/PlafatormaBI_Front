@@ -1,5 +1,86 @@
+<h2 class="title">Análisis de presupuesto para 
+    @if (!loadingEnterpriseReport()) {
+      <span>{{enterpriseReport()?.customer}}</span>
+    }
+</h2>
+@if (loadingEnterpriseReport()) {
+  <div class="flex justify-center">
+    <mat-spinner></mat-spinner>
+  </div>
+} @else {
+  <div class="dashboard-cards">
+    <div class="card-dashboard">
+      <p class="dashboard-cards__title">Contrato: </p>
+      <p>{{enterpriseReport()!.contract}}</p>
+      <div class="progress-bar">
+        <div class="progress-bar__fill flex justify-center" [style.width.%]="enterpriseReport()!.contractPercentage * 100">
+          <span class="progress-bar__text">
+          </span>
+        </div>
+      </div>
+      <div class="flex justify-center">
+        {{enterpriseReport()!.contractPercentage | percent}}
+      </div>
+    </div>
+    <div class="card-dashboard">
+      <p class="dashboard-cards__title">Ingreso (Ejec. / Ppto.): </p>
+      <p>{{(enterpriseReport()!.incomeE | millions) + ' / ' + (enterpriseReport()!.incomeP | millions)}}</p>
+      <div class="progress-bar">
+        <div class="progress-bar__fill flex justify-center" [style.width.%]="enterpriseReport()!.incomePercentage * 100">
+          <span class="progress-bar__text">
+          </span>
+        </div>
+      </div>
+      <div class="flex justify-center">
+        {{enterpriseReport()!.incomePercentage | percent}}
+      </div>
+    </div>
+    <div class="card-dashboard">
+      <p class="dashboard-cards__title">Cobranza (Ejec. / I. Ppto.): </p>
+      <p>{{(enterpriseReport()!.cashInflow | millions) + ' / ' + (enterpriseReport()!.incomeP | millions)}}</p>
+      <div class="progress-bar">
+        <div class="progress-bar__fill flex justify-center" [style.width.%]="enterpriseReport()!.cashPercentage * 100">
+          <span class="progress-bar__text">
+          </span>
+        </div>
+      </div>
+      <div class="flex justify-center">
+        {{enterpriseReport()!.cashPercentage | percent}}
+      </div>
+    </div>
+    <div class="card-dashboard">
+      <p class="dashboard-cards__title">Egreso (Ejec / E. Ppto.): </p>
+      <p>{{(enterpriseReport()!.budgetE | millions) + ' / ' + (enterpriseReport()!.budgetP | millions)}}</p>
+      <div class="progress-bar">
+        <div class="progress-bar__fill flex justify-center" [style.width.%]="enterpriseReport()!.budgetPercentage * 100">
+          <span class="progress-bar__text">
+          </span>
+        </div>
+      </div>
+      <div class="flex justify-center">
+        {{enterpriseReport()!.budgetPercentage | percent}}
+      </div>
+    </div>
+    <div class="card-dashboard">
+      <p class="dashboard-cards__title">Utilidad (Ejec / U. Ppto.): </p>
+      <p>{{(enterpriseReport()!.profitE | millions) + ' / ' + (enterpriseReport()!.profitP | millions)}}</p>
+      <div class="progress-bar">
+        <div class="progress-bar__fill flex justify-center" [style.width.%]="enterpriseReport()!.profitPercentage * 100">
+          <span class="progress-bar__text">
+          </span>
+        </div>
+      </div>
+      <div class="flex justify-center">
+        {{enterpriseReport()!.profitPercentage | percent}}
+      </div>
+    </div>
+  </div>
+}
+<div class="px-5 hr-container">
+  <hr>
+</div>
 <div class="flex space-x-3 p-4 items-center">
-  <div>
+  <div class="flex space-x-3">
     <p>Flujo: </p>
     <mat-form-field>
         <mat-select class="label-text-13" [(ngModel)]="currentHeaderFlow" placeholder="Seleccione el tipo de flujo">
@@ -9,7 +90,7 @@
         </mat-select>
     </mat-form-field>
   </div>
-  <div>
+  <div class="flex space-x-3">
     <p class="label-text-13">Desde: </p>
     <mat-form-field>
       <input class="label-text-13" matInput [matDatepicker]="startDatePicker" [formControl]="startDate" readonly>
@@ -21,7 +102,7 @@
       </mat-datepicker>
     </mat-form-field>
   </div>
-  <div>
+  <div class="flex space-x-3">
     <p class="label-text-13">Hasta: </p>
     <mat-form-field>
       <input class="label-text-13" matInput [matDatepicker]="endDatePicker" [formControl]="endDate" readonly>
