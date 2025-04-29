@@ -19,7 +19,11 @@ export class EnterpriseReportAdapter {
             budgetPercentage: entity.presupuesto_Porc,
             profitP: entity.utilidad_P,
             profitE: entity.utilidad_E,
-            profitPercentage: entity.utilidad_Porc
+            profitPercentage: entity.utilidad_Porc,
+            accountingProfitE: entity.e_Utilidad_Contable,
+            accountingProfit: entity.utilidad_Contable,
+            leasingProfitE: entity.e_Utilidad_conLeasing,
+            leasingProfit: entity.utilidad_conLeasing
         }
     }
 }

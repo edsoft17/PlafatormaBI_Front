@@ -13,4 +13,8 @@ export interface EnterpriseReport {
     profitP: number;
     profitE: number;
     profitPercentage: number;
+    accountingProfitE: string;
+    accountingProfit: number;
+    leasingProfitE: string;
+    leasingProfit: number;
 }

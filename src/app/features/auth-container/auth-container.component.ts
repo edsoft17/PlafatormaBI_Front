@@ -145,7 +145,7 @@ export class AuthContainerComponent implements OnInit {
       }
       return null;
     }catch{
-
+      this._spinnerService.hide();
     }
   }
 }

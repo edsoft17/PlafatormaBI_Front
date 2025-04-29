@@ -25,8 +25,10 @@ export class DialogDetailComponent {
 
   ngOnInit(): void {
     this.dataSource = this.data.primerGrupo;
+    console.log("this.data.primerGrupo: ",this.data.primerGrupo);
     const dynamicKeys = Object.keys(this.data.primerGrupo[0]).filter(key => key !== 'Area');
     this.displayedColumns = [...this.displayedColumns, ...dynamicKeys];
+    console.log("this.displayedColumns: ",this.displayedColumns);
   }
 
   formatCellValue(value: any, column: string): string {

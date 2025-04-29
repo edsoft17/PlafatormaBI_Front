@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
 import { NativeDateAdapter } from '@angular/material/core';
 import { MatDatepicker } from '@angular/material/datepicker';
 import { AccumulatedIncomed } from 'app/core/models/dashboard/accumulated-incomed';
-import { AccumulatedMonthlyReport } from 'app/core/models/dashboard/accumulated-monthly-report.';
+import { AccumulatedMonthlyReport, MonthlyReportSummary } from 'app/core/models/dashboard/accumulated-monthly-report.';
 import { FlowTypeGet } from 'app/core/models/flow/flow-type-get';
 import { ChartConfiguration, ChartData, ChartOptions, ChartType, ChartEvent, ChartDataset } from 'chart.js';
 import { DateTime } from 'luxon';
@@ -16,6 +16,7 @@ import { DialogDetailComponent } from '../dialog/dialog-detail/dialog-detail.com
 import { MatDialog } from '@angular/material/dialog';
 import { FlowDataAccount } from 'app/core/models/flow/flow-data-account';
 import { EnterpriseReport } from 'app/core/models/dashboard/enterprise-report';
+import { MatTableDataSource } from '@angular/material/table';
 
 // Configuración personalizada de formatos
 export const MY_DATE_FORMATS = {
@@ -65,7 +66,8 @@ export class DashboardComponent {
   monthlyAccumulatedIncomeList = input<AccumulatedMonthlyReport[]>([]);
   accumulatedIncomeDetailList = input<{
     firstGroup: AccumulatedMonthlyReport[],
-    secondGroup: AccumulatedMonthlyReport[]
+    secondGroup: AccumulatedMonthlyReport[],
+    thirdGroup: MonthlyReportSummary[]
   } | null>(null);
   incomeReportList = input<AccumulatedByType[]>([]);
   expenseReportList = input<AccumulatedByType[]>([]);
@@ -98,6 +100,9 @@ export class DashboardComponent {
   
   dataSourceI: any[] = [];
   dataSourceE: any[] = [];
+  dataSourceBudget = new MatTableDataSource<Record<string, string | number>>();
+  dataSourceChartIncome = new MatTableDataSource<Record<string, string | number>>();
+  dataSourceChartexpense = new MatTableDataSource<Record<string, string | number>>();
   loadingChartE = computed(()=>this._dashboardService.loadingChartE());
   loadingChartI = computed(()=>this._dashboardService.loadingChartI());
   loadingAccumulatedIncome = computed(()=>this._dashboardService.loadingAccumulatedIncome());
@@ -106,6 +111,7 @@ export class DashboardComponent {
   loadingAccumulatedReportByTypeI = computed(()=>this._dashboardService.loadingAccumulatedReportByTypeI());
   loadingAccumulatedReportByTypeE = computed(()=>this._dashboardService.loadingAccumulatedReportByTypeE());
   loadingEnterpriseReport = computed(()=>this._dashboardService.loadingEnterpriseReport());
+  columnsMonthlyReportSummary: string[] = [];
 
   monthlySalesVsCostsChartData: any;
 
@@ -124,18 +130,130 @@ export class DashboardComponent {
       this.monthlyProfitabilityChartData = this._dashboardPresenter.initMonthlyProfitabilityChart(this.monthlyAccumulatedIncomeList());
     });
     effect(() => {
+      if(this.accumulatedIncomeDetailList()?.thirdGroup) {
+        if(this.accumulatedIncomeDetailList()?.firstGroup?.length! > 0) {
+          let columnsData = this.accumulatedIncomeDetailList()?.firstGroup.map(data => data.month);
+          let columns = ['Mes'];
+          if(columnsData?.length && columnsData?.length > 0){
+            columns.push(...columnsData);
+            this.columnsMonthlyReportSummary = columns;
+            this.dataSourceBudget.data = [];
+            const firstGroup = this.accumulatedIncomeDetailList()?.firstGroup ?? [];
+            const secondGroup = this.accumulatedIncomeDetailList()?.secondGroup ?? [];
+            //const mapaLista:  = [];
+            const initialData: [string, string | number][] = [
+              ['Mes', 'Ingreso Ppto'],
+              ['Mes', 'Ingreso Real'],
+              ['Mes', 'Egreso Ppto'],
+              ['Mes', 'Egreso Real']
+            ];
+            
+            const miMapa = new Map<string, string | number>([
+              initialData[0],
+              ...firstGroup.map(data => [data.month, data.budgetAmount] as [string, string | number])
+            ]);
+            const miMapa2 = new Map<string, string | number>([
+              initialData[1],
+              ...firstGroup.map(data => [data.month, data.executedAmount] as [string, string | number])
+            ]);
+            const miMapa3 = new Map<string, string | number>([
+              initialData[2],
+              ...secondGroup.map(data => [data.month, data.budgetAmount] as [string, string | number])
+            ]);
+            const miMapa4 = new Map<string, string | number>([
+              initialData[3],
+              ...secondGroup.map(data => [data.month, data.executedAmount] as [string, string | number])
+            ]);
+
+            // Crear un objeto vacío para almacenar los resultados
+            let result: Record<string, string | number> = {};
+            let result2: Record<string, string | number> = {};
+            let result3: Record<string, string | number> = {};
+            let result4: Record<string, string | number> = {};
+
+            // Recorrer el Map y agregar cada par clave/valor al objeto
+            miMapa.forEach((value, key) => {
+              result[key] = value;
+            });
+            miMapa2.forEach((value, key) => {
+              result2[key] = value;
+            });
+            miMapa3.forEach((value, key) => {
+              result3[key] = value;
+            });
+            miMapa4.forEach((value, key) => {
+              result4[key] = value;
+            });
+            this.dataSourceBudget.data = [result,result2,result3,result4];
+          }
+        }
+      }
       this.monthlySalesVsCostsChartData = this._dashboardPresenter.initMonthlySalesVsCostsChart(this.accumulatedIncomeDetailList());
     });
     effect(() => {
       this.dataSourceI = this.incomeReportList();
-      if(this.incomeReportList()?.length > 0) this.showChartIncome(this.incomeReportList()[0],0)
       this.dataSourceE = this.expenseReportList();
+      if(this.incomeReportList()?.length > 0) this.showChartIncome(this.incomeReportList()[0],0)
       if(this.expenseReportList()?.length > 0) this.showChartExpense(null,this.expenseReportList()[0],0)
     });
     effect(() => {
+      this.dataSourceChartIncome.data = [];
+      if(this.incomeReportChartList().length > 0) {
+        const initialData: [string, string | number][] = [
+          ['Mes', 'Ingreso Ppto'],
+          ['Mes', 'Ingreso Real'],
+        ];
+        const miMapa = new Map<string, string | number>([
+          initialData[0],
+          ...this.incomeReportChartList().map(data => [data.month, data.budgetAmount] as [string, string | number])
+        ]);
+        const miMapa2 = new Map<string, string | number>([
+          initialData[1],
+          ...this.incomeReportChartList().map(data => [data.month, data.executedAmount] as [string, string | number])
+        ]);
+
+        let result: Record<string, string | number> = {};
+        let result2: Record<string, string | number> = {};
+
+        miMapa.forEach((value, key) => {
+          result[key] = value;
+        });
+        miMapa2.forEach((value, key) => {
+          result2[key] = value;
+        });
+
+        this.dataSourceChartIncome.data = [result,result2];
+      }
       this.incomeReportChartData = this._dashboardPresenter.initMonthlyIncomeChart(this.incomeReportChartList());
     });
     effect(() => {
+      this.dataSourceChartexpense.data = [];
+      if(this.expenseReportChartList().length > 0) {
+        const initialData: [string, string | number][] = [
+          ['Mes', 'Ingreso Ppto'],
+          ['Mes', 'Ingreso Real'],
+        ];
+        const miMapa = new Map<string, string | number>([
+          initialData[0],
+          ...this.expenseReportChartList().map(data => [data.month, data.budgetAmount] as [string, string | number])
+        ]);
+        const miMapa2 = new Map<string, string | number>([
+          initialData[1],
+          ...this.expenseReportChartList().map(data => [data.month, data.executedAmount] as [string, string | number])
+        ]);
+
+        let result: Record<string, string | number> = {};
+        let result2: Record<string, string | number> = {};
+
+        miMapa.forEach((value, key) => {
+          result[key] = value;
+        });
+        miMapa2.forEach((value, key) => {
+          result2[key] = value;
+        });
+
+        this.dataSourceChartexpense.data = [result,result2];
+      }
       this.expenseReportChartData = this._dashboardPresenter.initMonthlyExpenseChart(this.expenseReportChartList());
     });
   }

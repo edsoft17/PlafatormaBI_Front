@@ -16,7 +16,7 @@ import { AccumulatedMonthlyReportAdapter } from 'app/core/adapters/dashboard/acc
 import { AccumulatedMonthlyReportEntity } from 'app/core/entities/dashboard/accumulated-monthly-report.entity';
 import { AccumulatedIncomed } from 'app/core/models/dashboard/accumulated-incomed';
 import { AccumulatedIncomedGetAdapter } from 'app/core/adapters/dashboard/accumulated-incomed.adapter';
-import { AccumulatedMonthlyReport } from 'app/core/models/dashboard/accumulated-monthly-report.';
+import { AccumulatedMonthlyReport, MonthlyReportSummary } from 'app/core/models/dashboard/accumulated-monthly-report.';
 import { AccumulatedByTypeAdapter } from 'app/core/adapters/dashboard/accumulated-by-type.adapter';
 import { AccumulatedByType } from 'app/core/models/dashboard/accumulated-by-type';
 import { FlowHeaderGetEntity } from 'app/core/entities/flow/flow-header-get.entity';
@@ -26,6 +26,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { EnterpriseReport } from 'app/core/models/dashboard/enterprise-report';
 import { EnterpriseReportEntity } from 'app/core/entities/dashboard/enterprise-report.entity';
 import { EnterpriseReportAdapter } from 'app/core/adapters/dashboard/enterprise-report.adapter';
+import { MonthlyReportSummaryAdapter } from 'app/core/adapters/dashboard/monthly-report-summary.adapter';
 
 @Component({
   selector: 'app-dashboard-container',
@@ -54,7 +55,8 @@ import { EnterpriseReportAdapter } from 'app/core/adapters/dashboard/enterprise-
     AccumulatedIncomedGetAdapter,
     AccumulatedByTypeAdapter,
     FlowHeaderGetAdapter,
-    EnterpriseReportAdapter
+    EnterpriseReportAdapter,
+    MonthlyReportSummaryAdapter
   ]
 })
 export class DashboardContainerComponent implements OnInit {
@@ -69,6 +71,7 @@ export class DashboardContainerComponent implements OnInit {
   private readonly _dashboardContainerPresenter = inject(DashboardContainerPresenter);
   private readonly _flowTypeGetAdapter = inject(FlowTypeGetAdapter);
   private readonly _accumulatedMonthlyReportAdapter = inject(AccumulatedMonthlyReportAdapter);
+  private readonly _monthlyReportSummaryAdapter = inject(MonthlyReportSummaryAdapter);
   private readonly _accumulatedIncomedGetAdapter = inject(AccumulatedIncomedGetAdapter);
   private readonly _accumulatedByTypeAdapter = inject(AccumulatedByTypeAdapter);
   private readonly _enterpriseReportAdapter = inject(EnterpriseReportAdapter);
@@ -78,7 +81,8 @@ export class DashboardContainerComponent implements OnInit {
   monthlyAccumulatedIncomeList: AccumulatedMonthlyReport[] = [];
   accumulatedIncomeDetailList: {
     firstGroup: AccumulatedMonthlyReport[],
-    secondGroup: AccumulatedMonthlyReport[]
+    secondGroup: AccumulatedMonthlyReport[],
+    thirdGroup: MonthlyReportSummary[]
   } | null = null;
   incomeReportList: AccumulatedByType[] = [];
   expenseReportList: AccumulatedByType[] = [];
@@ -92,7 +96,7 @@ export class DashboardContainerComponent implements OnInit {
   ngOnInit(): void {
     this._dashboardContainerPresenter.getDataFromRoute();
     this.getFlowTypes();
-    this.getFlowHeaders();
+     this.getFlowHeaders();
     this.getReportEnterprise();
   }
 
@@ -117,13 +121,11 @@ export class DashboardContainerComponent implements OnInit {
       }, 
       error: (data: HttpErrorResponse) => {
         if(data.status === 500) this._toastrService.error("Error de conexión con el servidor", "Error");
-        console.log("mi data es: ",data);
       }
     });
   }
 
   loadInitDataDashboard(event: { structureId: number, dates: [Date,Date] }): void {
-    //this._spinnerService.show();
     const arrObs = [
       this._dashboardService.getAccumulatedIncome(event.structureId,event.dates[0],event.dates[1]),
       this._dashboardService.getMonthlyAccumulatedIncome(event.structureId,event.dates[0],event.dates[1]),
@@ -154,7 +156,8 @@ export class DashboardContainerComponent implements OnInit {
         this.monthlyAccumulatedIncomeList = this._accumulatedMonthlyReportAdapter.convertEntityToModelArray(response[1].data);
         this.accumulatedIncomeDetailList = {
           firstGroup: this._accumulatedMonthlyReportAdapter.convertEntityToModelArray(response[2].data.primerGrupo),
-          secondGroup: this._accumulatedMonthlyReportAdapter.convertEntityToModelArray(response[2].data.segundoGrupo)
+          secondGroup: this._accumulatedMonthlyReportAdapter.convertEntityToModelArray(response[2].data.segundoGrupo),
+          thirdGroup: this._monthlyReportSummaryAdapter.convertEntityToModelArray(response[2].data.tercerGrupo)
         }
         this.incomeReportList = this._accumulatedByTypeAdapter.convertEntityToModelArray(response[3].data);
         this.expenseReportList = this._accumulatedByTypeAdapter.convertEntityToModelArray(response[4].data);

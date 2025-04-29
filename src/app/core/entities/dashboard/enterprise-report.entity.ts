@@ -13,4 +13,8 @@ export interface EnterpriseReportEntity {
     utilidad_P: number;
     utilidad_E: number;
     utilidad_Porc: number;
+    e_Utilidad_Contable: string;
+    utilidad_Contable: number;
+    e_Utilidad_conLeasing: string;
+    utilidad_conLeasing: number;
 }
