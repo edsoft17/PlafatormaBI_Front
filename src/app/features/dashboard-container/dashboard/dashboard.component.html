@@ -96,7 +96,7 @@
   </div>
   <div class="flex space-x-3">
     <p class="label-text-13">Desde: </p>
-    <mat-form-field>
+    <mat-form-field class="w-32">
       <input class="label-text-13" matInput [matDatepicker]="startDatePicker" [formControl]="startDate" readonly>
       <mat-datepicker-toggle matIconSuffix [for]="startDatePicker"></mat-datepicker-toggle>
       <mat-datepicker #startDatePicker
@@ -108,7 +108,7 @@
   </div>
   <div class="flex space-x-3">
     <p class="label-text-13">Hasta: </p>
-    <mat-form-field>
+    <mat-form-field class="w-32">
       <input class="label-text-13" matInput [matDatepicker]="endDatePicker" [formControl]="endDate" readonly>
       <mat-datepicker-toggle matIconSuffix [for]="endDatePicker"></mat-datepicker-toggle>
       <mat-datepicker #endDatePicker
@@ -124,21 +124,21 @@
      (click)="getDataDashboard()">
     <mat-icon>search</mat-icon>
   </button>
+  <section class="cards-periods">
+    @for (accumulated of accumulated(); track $index) {
+      <div class="cards-periods__item">
+        <div class="cards-periods__icon">
+          <mat-icon>attach_money</mat-icon>
+        </div>
+        <div class="cards-periods__content">
+          <span class="text-xl font-semibold cards-periods__amount" [ngClass]="{'text-red-800': accumulated.value < 0, 'text-sky-800': accumulated.value >= 0}">{{accumulated.value | currency:'PEN':'symbol':'1.2-2':'es-PE'}}</span>
+          <span class="cards-periods__text">{{accumulated.name}}</span>
+        </div>
+      </div>
+    }
+  </section>
 </div>
 
-<section class="cards-periods">
-  @for (accumulated of accumulated(); track $index) {
-    <div class="cards-periods__item">
-      <div class="cards-periods__icon">
-        <mat-icon>attach_money</mat-icon>
-      </div>
-      <div class="cards-periods__content">
-        <span class="text-xl font-semibold cards-periods__amount" [ngClass]="{'text-red-800': accumulated.value < 0, 'text-sky-800': accumulated.value >= 0}">{{accumulated.value | currency:'PEN':'symbol':'1.2-2':'es-PE'}}</span>
-        <span class="cards-periods__text">{{accumulated.name}}</span>
-      </div>
-    </div>
-  }
-</section>
 <div class="grid grid-cols-6 m-7 gap-x-6 gap-y-12">
   <div class="col-span-2" [ngClass]="{'place-self-center': loadingMonthlyAccumulatedIncome()}">
     @if (loadingMonthlyAccumulatedIncome()) {
@@ -154,8 +154,7 @@
             [data]="monthlyProfitabilityChartData?.chartData"
             [options]="monthlyProfitabilityChartData?.chartOptions"
             [legend]="true"
-            type="line"
-          >
+            type="line">
           </canvas>
         </div>
       </div>
@@ -176,7 +175,7 @@
                       {{ childColumn }}
                   </th>
                   <td mat-cell *matCellDef="let element" class="table-rows">
-                    {{ element[childColumn] }}
+                    {{ element[childColumn] | numberWithCommas }}
                   </td>
               </ng-container>
             }
@@ -192,7 +191,7 @@
     } @else {
       <div>
         <h3 class="text-lg font-semibold text-[#73879C] border-b border-gray-200 pb-2 mb-4">
-          Ingresos/Egresos vs Ppto por mes
+          G. Ingresos/Egresos vs Ppto por mes
         </h3>
         <div class="h-80">
           <canvas
@@ -282,7 +281,7 @@
                       {{ childColumn }}
                   </th>
                   <td mat-cell *matCellDef="let element" class="table-rows">
-                    {{ element[childColumn] }}
+                    {{ element[childColumn] | numberWithCommas }}
                   </td>
               </ng-container>
             }
@@ -415,7 +414,7 @@
     } @else {
       <div>
         <h3 class="text-lg font-semibold text-[#73879C] border-b border-gray-200 pb-2 mb-4">
-          Costos/Gastos vs Ppto por mes
+          G. Costos/Gastos vs Ppto por mes
         </h3>
         <div class="h-80">
           <canvas

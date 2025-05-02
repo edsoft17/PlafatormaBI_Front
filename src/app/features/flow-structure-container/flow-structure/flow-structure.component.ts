@@ -21,89 +21,7 @@ import { FlowDataAccount } from 'app/core/models/flow/flow-data-account';
 })
 export class FlowStructureComponent {
   @Input() flowTypes: FlowTypeGet[] = [];
-  @Input() flowHeaders: FlowHeaderGet[] = [
-    {
-        "structureHeaderId": 27,
-        "name": "Cuarto flujo f2",
-        "state": true
-    },
-    {
-        "structureHeaderId": 17,
-        "name": "Flujo control costos",
-        "state": true
-    },
-    {
-        "structureHeaderId": 33,
-        "name": "Flujo de linea",
-        "state": true
-    },
-    {
-        "structureHeaderId": 32,
-        "name": "Octavo flujo",
-        "state": true
-    },
-    {
-        "structureHeaderId": 19,
-        "name": "Primer flujo",
-        "state": true
-    },
-    {
-        "structureHeaderId": 20,
-        "name": "Primer flujo",
-        "state": true
-    },
-    {
-        "structureHeaderId": 21,
-        "name": "Primer flujo",
-        "state": true
-    },
-    {
-        "structureHeaderId": 22,
-        "name": "Primer flujo modificado",
-        "state": true
-    },
-    {
-        "structureHeaderId": 28,
-        "name": "Quinto flujo",
-        "state": true
-    },
-    {
-        "structureHeaderId": 23,
-        "name": "Segundo flujo",
-        "state": true
-    },
-    {
-        "structureHeaderId": 24,
-        "name": "Segundo flujo",
-        "state": true
-    },
-    {
-        "structureHeaderId": 25,
-        "name": "Segundo flujo",
-        "state": true
-    },
-    {
-        "structureHeaderId": 31,
-        "name": "Séptimo flujo",
-        "state": true
-    },
-    {
-        "structureHeaderId": 29,
-        "name": "Sexto flujo",
-        "state": true
-    },
-    {
-        "structureHeaderId": 30,
-        "name": "Sexto flujo",
-        "state": true
-    },
-    {
-        "structureHeaderId": 26,
-        "name": "Tercer flujo",
-        "state": true
-    }
-];
-
+  @Input() flowHeaders: FlowHeaderGet[] = []
   @Output() eventGetFlowHeader: EventEmitter<number> = new EventEmitter<number>();
   @Output() eventLoadInitDataDialog: EventEmitter<FlowHeaderGet | null> = new EventEmitter<FlowHeaderGet | null>();
 
@@ -165,10 +83,10 @@ export class FlowStructureComponent {
       //width: '100vw',  // 90% del ancho del viewport
       //height: '90vh', // 90% del alto del viewport
       //maxWidth: 'none', // Evita que Material limite el ancho
-      width: '95vw',  // 100% del ancho de la ventana
+      width: '1200px',  // 100% del ancho de la ventana
   //height: '100vh', // 100% del alto de la ventana
       maxWidth: 'none', // Evita restricciones de Angular Material
-      minWidth: "800px"
+      minWidth: "600px"
     });
     respDialogo.beforeClosed().subscribe(res => {
       if(res){

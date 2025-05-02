@@ -20,6 +20,7 @@ import { AbsPipe } from 'app/core/pipe/abs.pipe';
 import { DialogDetailComponent } from './dialog/dialog-detail/dialog-detail.component';
 import { BiContDialogComponent } from 'app/components/bi-cont-dialog/bi-cont-dialog.component';
 import { MillionsPipe } from 'app/core/pipe/millions.pipe';
+import { NumberWithCommasPipe } from 'app/core/pipe/number-with-commas.pipe';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { MillionsPipe } from 'app/core/pipe/millions.pipe';
     BiContDialogComponent,
     NgClass,
     AbsPipe,
-    MillionsPipe
+    MillionsPipe,
+    NumberWithCommasPipe
   ],
   providers: [
     //provideNativeDateAdapter(),

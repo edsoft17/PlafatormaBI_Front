@@ -280,7 +280,7 @@ hr {
   display: flex;
   width: 100%;
   gap: 16px; /* Espacio entre elementos */
-  padding: 0px 30px;
+  /* padding: 0px 30px; */
 }
 
 .cards-periods__item {
@@ -291,7 +291,7 @@ hr {
   border-radius: 20px;
   border: none;
   font-weight: bold;
-  padding: 20px 25px;
+  padding: 20px 18px;
   //box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
   display: flex;

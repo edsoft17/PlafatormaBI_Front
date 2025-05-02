@@ -26,7 +26,7 @@ import { MatListModule } from '@angular/material/list';
 import { TreeCheckboxesComponent } from './dialog/dialog-flow-structure-container/dialog-flow-structure/components/tree-checkboxes/tree-checkboxes.component';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatMenuModule } from '@angular/material/menu';
-
+import { MatStepperModule } from '@angular/material/stepper';
 
 @NgModule({
   declarations: [
@@ -58,7 +58,8 @@ import { MatMenuModule } from '@angular/material/menu';
     MatCheckboxModule,
     MatListModule,
     MatDividerModule,
-    MatMenuModule
+    MatMenuModule,
+    MatStepperModule
   ]
 })
 export default class FlowStructureContainerModule { }

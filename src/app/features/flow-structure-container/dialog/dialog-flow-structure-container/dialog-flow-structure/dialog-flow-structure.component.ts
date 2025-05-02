@@ -13,6 +13,7 @@ import { HierarchyNode } from './dialog-flow-structure.models';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { LedgerAccountGet } from 'app/core/models/flow/ledger-account-get';
 import { FlowHeaderGet } from 'app/core/models/flow/flow-header-get';
+import { StepperSelectionEvent } from '@angular/cdk/stepper';
 
 @Component({
   selector: 'ui-dialog-flow-structure',
@@ -48,6 +49,7 @@ export class DialogFlowStructureComponent implements OnInit {
   filteredAccounts!: LedgerAccountGet[];
   showAssociatedAccount: boolean = false;
   menuContextNode!: Structure;
+  tabIndex = 0;
   
   public readonly dialog = inject(MatDialog);
 
@@ -186,9 +188,15 @@ export class DialogFlowStructureComponent implements OnInit {
       this.filteredAccounts = [...node.accountsList];
       this.showAssociatedAccount = true;
     }
+    this.tabIndex = 1;
     console.log("tiene cuentas? ", node.accountsList);
     this.updateAssignedAccountsSet(); // Actualizar el Set antes de mostrar
     this.eventGetLedgerAccounts.emit();
+  }
+
+  getTabIndex(event: StepperSelectionEvent): void {
+    this.tabIndex = event.selectedIndex;
+    console.log(event);
   }
 
   handleSelectedAccounts(selectedAccounts: LedgerAccountGet[]): void {
